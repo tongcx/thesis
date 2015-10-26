@@ -1,0 +1,299 @@
+\newcommand{\bV}{{\bm V}}
+\newcommand{\Vhat}{\hat{V}}  
+
+\chapter{Mixture logit}
+
+\section{Introduction}
+
+A common problem faced by many firms involves choosing an assortment of products to offer to their customers with the goal of maximizing revenues. There are two sources of difficulty when dealing with such problems. First, the products may serve as substitutes and the customers may make a choice among the products that satisfy their needs. This creates a situation where the demand for each product  depends on what assortment of products are offered to the customers. Second, there can be multiple customer segments served by the firm and the customers belonging to different segments may have different preferences. So, one has to consider the preferences of the different customer segments, as well as the size of each segment, when deciding which assortment of products to offer.
+
+
+In this paper, we consider an assortment optimization problem to address the difficulties described above.
+
+Each customer makes a choice among the offered products according to the multinomial logit choice model. The crucial feature of our assortment optimization problem is that the parameters of the choice model are assumed to be unknown to the firm and they are modeled as random variables. This type of a situation happens when there are multiple customer segments with different preferences and the segment of a customer is not known to the firm when the customer makes a purchase. The goal of the firm is to choose an assortment of products that maximizes the expected revenue obtained from each customer.
+
+Our work in this paper has connections to the growing literature on assortment planning models in revenue management. In their seminal work, \cite{TalluriVanRyzin:2004} study a version of our assortment optimization problem under the assumption that the parameters of the multinomial logit model are deterministic and known. Under this assumption, the authors show that the optimal assortment includes a certain number of products with the highest revenues. Throughout the paper, we refer to such assortments as revenue-ordered assortments. In this case, the optimal assortment can be obtained efficiently by checking the expected revenue from each assortment that includes a certain number of products with the highest revenues. In contrast, if the  model parameters are random, then \mbox{revenue-ordered} assortments are no longer optimal and the assortment optimization problem appears to be intractable.~Indeed, \cite{BrontMendezVulcano:2009} study the assortment optimization problem with random choice model parameters and establish that the problem is NP-complete when the number of possible realizations of the choice model parameters is at least as large as the number of products.
+
+\paragraph{Our Contributions and Main Results:} The above discussion shows a strong contrast between {\em deterministic} versus {\em random}
+model parameters. For the case with deterministic and known  model parameters, knowing the optimality of revenue-ordered assortment has crucial theoretical and practical implications.~On the theoretical side, optimality of revenue-ordered assortments allows us to find an optimal assortment in linear time. On the practical side, optimality of revenue-ordered assortments are intuitively appealing as they urge the firms to shift their focus on high-contribution products, making them easy to justify. Also, optimality of revenue-ordered assortments corresponds to nested protection levels in revenue management settings, where a certain fare class remains open as long as cheaper fare classes remain open. Legacy revenue management systems are commonly tied to the assumption of nested protection levels and using revenue-ordered assortments allow compatibility with such systems.~Our goal in this paper is to close the big chasm between the two cases. Building on the fact that revenue-ordered assortments are optimal when the choice model parameters are deterministic, {\em we investigate the question of what we can say about the performance of such assortments when the choice model parameters are random}.
+
+
+We focus on the performance of revenue-ordered assortments when the randomness in the choice model parameters does not follow a special structure. If there are~$G$ possible realizations for the choice model parameters and $n$ products that we can possibly offer to the customers, then we show that revenue-ordered assortments provide an approximation guarantee of ~$\min\{G, \lceil n/2 \rceil\}$ (Theorem \ref{thm:guarantee-product}). Furthermore, this performance guarantee is tight in the sense that there are instances of the assortment optimization problem where the expected revenue from the best revenue-ordered assortment deviates from the optimal by a factor of $\min\{G, \lceil n/2 \rceil\}$ (Proposition \ref{pro:tight}).  The tight instances involve products whose revenues differ from each other by orders of magnitude.
+
+
+\paragraph{Related Literature:} We focus our literature review primarily on papers that use variants of the multinomial logit model to describe the demand process. We refer the reader to \cite{KokFV2006}, \cite{FaJaSh11} and \cite{FaJaSh12} for assortment problems under other choice models.~\cite{TalluriVanRyzin:2004} show that if  customers choose according to the multinomial logit model and the choice model parameters are deterministic and known, then revenue-ordered assortments are optimal.~\cite{GaRa11} show that this problem can directly be formulated and solved as a linear program.~\cite{RoShSh10} study the same problem with a cardinality constraint on the offered assortment and show that although revenue-ordered assortments are no longer optimal, the optimal assortment can be computed efficiently. \cite{JaFa11} also focus on assortment optimization problems where there is a cardinality constraint on the offered assortment. They study the performance of an intuitive pairwise exchange algorithm and show that this algorithm finds the optimal solution when customers choose according to the multinomial logit model with known parameters. \cite{RT:2009} show that revenue-ordered assortments are robust against the uncertainty in model parameters, in the sense that they protect against the worst-case expected revenue. This class of assortments are no longer optimal when the choice model parameters are random. \cite{BrontMendezVulcano:2009} show that the assortment problem is NP-complete in the strong sense under random model parameters, give a mixed integer programming formulation to obtain the optimal assortment and suggest a greedy heuristic. \cite{DiBr11} strengthen the mixed integer programming formulation through valid inequalities. There is some work on solving assortment problems under the nested logit model, which is an extension of the multinomial logit model, allowing correlations between the evaluations of different products by a particular customer. \cite{DavisEtal:2012} give a linear programming formulation of the assortment problem under the nested logit model. \cite{LiRusmevichientong:2012} give a greedy algorithm for the same problem. \cite{GallegoTopaloglu:2012} show how to impose a variety of constraints on the offered assortment when customers chose according to the nested logit model. All of the current work on nested logit model is under the assumption that 
+there is a single customer segment with known choice model parameters.
+
+
+Our work is also related to revenue management models that incorporate customer choice. \cite{TalluriVanRyzin:2004} study a revenue management problem over a single flight leg. Customers choose among the fare classes that are available for purchase and the objective is to adjust the assortment of available fare classes at each period to maximize the total expected revenue. There are a number of papers that extend this work to a flight network; see \cite{GallegoIPD2004}, \cite{LiuV2008}, \cite{KunnumkalTopaloglu:2008}, \cite{ZhangAdelman:2008}, \cite{Talluri:2010}, \cite{GaRa11}, \cite{MeissnerStrauss:2008}, \cite{VoZh12} and \cite{MeSt12}. The fundamental idea in these papers is to formulate various deterministic linear programming approximations. These linear programs have one decision variable for each subset of itinerary products, corresponding to the duration of time during which a subset of itinerary products is made available to customers. As a result, the number of decision variables can get large and it is customary to solve these linear programs by using column generation. The column generation subproblem corresponds to our  assortment problem when customers choose according to the multinomial logit model with random parameters. Of particular interest in this domain is the work by \cite{Talluri:2010} and \cite{MeSt12}, where the authors focus on the case with multiple customer segments and customers from different segments choose according to different choice models. The first paper gives tractable relaxations of the problem when there are multiple segments, whereas the second paper gives valid cuts to tighten the relaxation, but as far as we are aware, it is difficult to a priori characterize the tightness of these relaxations. 
+
+
+The rest of the paper is organized as follows. In Section \ref{sec:form}, we formulate our assortment optimization problem. In Section \ref{sec:app}, we develop approximation guarantees for revenue-ordered assortments when the randomness in the choice model parameters does not have any special structure.
+
+\section{Model Formulation}
+\label{sec:form}
+
+We have $n$ products indexed by $1,2,\ldots,n$, and for each $i$, let $r_i$ be the revenue associated with product $i$.~Without loss of generality, we assume that the products are indexed such that  $r_1 \geq r_2 \geq \ldots \geq r_n$. The customers choose among the offered products according to random utility maximization. In particular, each customer associates the utility
+%
+%
+\begin{align*}
+U_i = V_i + \epsilon_i
+\end{align*}
+%
+%
+with product $i$, where $\epsilon_i$ is a standard Gumbel random variable with mean zero and we view $V_i$ as the mean utility of product $i$. We normalize the utility of the no purchase option to zero. In this case, if we offer the assortment $S \subseteq \{1,\ldots,n\}$ of products to the customers, then a customer chooses the product with the highest utility if the utility of this product is positive, but otherwise, leaves without purchasing anything. It is a standard result
+in discrete choice theory (see, for example, \cite{BenAkivaL1985} and \cite{Tr03}) that if we offer the assortment $S$ to the customers, then a customer chooses product $i \in S$ with probability 
+%
+%
+\begin{align*}
+\pi_i(S,\bV) = \frac{e^{V_i}}{1 + \sum_{j \in S} e^{V_j}} \ts ,
+\end{align*}
+where we use $\bV = (V_1,\ldots,V_n)$ to denote the vector of mean utilities of the products, and make the dependence of $\pi_i(S,\bV)$ on $S$ and $\bV$ explicit. The choice model above is known as the multinomial logit model. If we offer the assortment $S$ and the vector of mean utilities is $\bV$, then the expected revenue obtained from a customer is 
+%
+%
+\begin{align*}
+f(S,\bV) = \sum_{i \in S} r_i \ts \pi_i(S,\bV).
+\end{align*}
+%
+%
+When the mean utility vector $\bV$ is fixed and known, we can find an assortment that maximizes the expected revenue from a customer by solving the problem $\max_{S \subseteq \{1,\ldots,n\}} f(S,\bV)$. The implicit assumption behind using a fixed mean utility vector is that each customer is probabilistically identical, reacting to an offered assortment in the same manner. On the other hand, if each customer has a different reaction towards an assortment, then the mean utilities that a customer attaches to the products can be modeled as random variables themselves. In that case, we can solve
+%
+%
+\begin{align*}
+Z^* = \max_{S \subseteq \{1,\ldots,n\}} \mathbb E \{ f(S,\bV) \}
+\tag{\sc Mixture Logit}
+\label{eqn:mix}
+\end{align*}
+%
+%
+to find an assortment that maximizes the expected revenue over all possible realizations of the mean utility vector. The above expectation  involves the random vector $\bV$ and the distribution of $\bV$ naturally depends on the composition of the market and how customers in the market make a choice.~The random vector $\bV$ can have a discrete or continuous distribution and we assume that it is independent of $(\epsilon_1,\ldots, \epsilon_n)$. We continue referring to $V_i$ as the mean utility of product $i$, although $V_i$ is random.~Throughout the paper, we focus on the \ref{eqn:mix} problem.
+
+The mean utilities $\bV$ can be either discrete or continuous random vectors, depending on the specific application. For example, if we have $G$ customer types, with each type following a multinomial logit choice model, then $\bV$ is a discrete random vector that takes $G$ different values $\hat{\bV}^1,\ldots,\hat{\bV}^G$, where $\hat{\bV}^g$ corresponds to the mean utilities of customer type $g$.  In another example, we can have  $\bV = \bm{\mu} - B \bm{r}$, where $\bm{\mu}= (\mu_1, \ldots, \mu_n)$ is a deterministic vector, $\bm{r} = (r_1, \ldots, r_n)$ gives the prices of the products, and $B$ is a continuous random variable.  In this case, $\bV$ is a continuous random vector, and $B$ is the customer-specific price sensitivity, whose distribution reflects the price sensitivity pattern among the customers.   More generally,
+\cite{McTr00} have shown that any choice model based on random utility maximization can be approximated arbitrarily well by the multinomial logit model with random parameters, although the required mixing distribution of $\bV$ can be quite complicated and may be difficult to calibrate.  Thus, the mixture-of-logits model, in principal, can be used as an approximation  in assortment optimization problems under a general choice model.
+
+
+
+
+
+
+%with $\Pr\{ \bV = \hat{\bV}^g \} = \alpha^g$ for all $g$.  Then, 
+% and $\sum_{g} \alpha^g = 1$. The $g$th possible value of $\bV$ is  $\hat{\bV}^g = (\Vhat_1^g,\ldots, \Vhat_n^g)$ and $\bV$ takes value $\hat{\bV}^g$ with probability $\alpha^g$. We view this situation as serving a market with $G$ customer segments. A customer in segment $g$ has the vector of mean utilities $\hat{\bV}^g = (\Vhat_1^g,\ldots, \Vhat_n^g)$. The relative size of customer segment $g$ is $\alpha^g$, capturing the probability of getting a customer in this segment. The \ref{eqn:mix} problem maximizes the expected revenue over all customer segments.
+
+%In the next two examples, we demonstrate  concrete situations where the \ref{eqn:mix} problem can be of practical interest. The first example corresponds to a case where we serve a market composed of multiple customer segments. The second example corresponds to a case where different customers have different price sensitivities.
+%
+%
+%\begin{example}[Multiple Customer Segments]
+%\label{ex:mixture}
+%\rm
+%Consider the case where the mean utility vector $\bV$ can take $G$ different values $\hat{\bV}^1,\ldots,\hat{\bV}^G$. The $g$th possible value of $\bV$ is  $\hat{\bV}^g = (\Vhat_1^g,\ldots, \Vhat_n^g)$ and $\bV$ takes value $\hat{\bV}^g$ with probability $\alpha^g$. We view this situation as serving a market with $G$ customer segments. A customer in segment $g$ has the vector of mean utilities $\hat{\bV}^g = (\Vhat_1^g,\ldots, \Vhat_n^g)$. The relative size of customer segment $g$ is $\alpha^g$, capturing the probability of getting a customer in this segment. The \ref{eqn:mix} problem maximizes the expected revenue over all customer segments.
+%\end{example}
+%
+%\begin{example}[Customer-Specific Price Sensitivity]
+%\rm
+%Consider the case where the mean utility of product $i$ is of the form $V_i = \mu_i - B \ts r_i$, where $\mu_i$ is a constant and $B$ is a random variable, so that $\bV = \bm{\mu} - B \bm{r}$ with $\bm{\mu}= (\mu_1, \ldots, \mu_n)$ and $\bm{r} = (r_1, \ldots, r_n)$. We can interpret the random variable $B$ as the customer-specific price sensitivity, whose distribution reflects the price sensitivity pattern among the customers in the market. In this case, the \ref{eqn:mix} problem  finds an assortment that maximizes the expected revenue over all customers with different price sensitivities.
+%\end{example}
+
+\section{Performance of Revenue-Ordered Assortments}
+\label{sec:app}
+
+In this section, we investigate the performance of revenue-ordered assortments for general instances of the \ref{eqn:mix} problem. Throughout this section, we say that revenue-ordered assortments provide an approximation guarantee of $\beta$ if the expected revenue from the best revenue-ordered assortment deviates from the optimal expected revenue by no more than a factor of $\beta$. In other words, noting that the optimal objective value of the \ref{eqn:mix} problem is denoted by $Z^*$, if we have 
+%
+%
+\begin{align*}
+\frac{1}{\beta} \ts Z^* \leq \max_{i =1,\ldots,n} \mathbb E \{ f(\{1,\ldots,i\},\bV)\},
+\end{align*}
+%
+%
+for some $\beta \geq 1$, then we say that revenue-ordered assortments provide an approximation guarantee~of~$\beta$.  In the next section, we derive an approximation guarantee that increases linearly with the number of products and customer segments, and prove that it is tight.  This guarantee is applicable when the number of products or customer segments is small. For larger problem instances, we derive other guarantees based on the variations in the mean utilities and product revenues in Section \ref{section:approximation-revenue}.
+
+\subsection{A Tight Guarantee Based on the Number of Products and Customer Segments}
+\label{section:approximation-product}
+
+In the next theorem, we show that if there are $G$ possible realizations for the vector of mean utilities and $n$ possible products that we can offer to customers, then revenue-ordered assortments provide an approximation guarantee of $\min\{ G, \lceil n/2 \rceil \}$.
+
+\begin{theorem}[Guarantees Based on Numbers of Mean Utility Realizations and Products]
+\label{thm:guarantee-product}
+If there are $G$ realizations of the vector of mean utilities, then revenue-ordered assortments provide an approximation guarantee of $\min\{ G, \lceil n/2 \rceil \}$ for the \ref{eqn:mix} problem.
+\end{theorem}
+
+The proof of Theorem \ref{thm:guarantee-product} makes use of the following property of the expected revenue function.
+
+\begin{lemma}
+\label{lem:app_n}
+For every realization of the vector of mean utilities $\bV$, the following two results hold.
+
+\noindent \textup{($i$)} For all assortments $S$ and $T$,  $f(S \cup T ,\bV)\leq f(S,\bV)+ f(T,\bV)$.
+
+\noindent \textup{($ii$)} For all products $i$ and $j$ with $i < j$, $f(\{i,\ldots,j\} ,\bV) \leq f(\{1,\ldots,j\} ,\bV)$. 
+
+\end{lemma}
+
+\begin{proof}
+The first result follows immediately from the fact that
+$$
+f(S \cup T,\bV)
+=
+\frac{\sum_{i \in S} r_i \ts e^{V_i} + \sum_{i \in T} r_i \ts e^{V_i}}{1 + \sum_{i \in S} e^{V_i} + \sum_{i \in T} e^{V_i}}
+\leq
+\frac{\sum_{i \in S} r_i \ts e^{V_i} }{1 + \sum_{i \in S} e^{V_i}}
++
+\frac{\sum_{i \in T} r_i \ts e^{V_i}}{1 + \sum_{i \in T} e^{V_i}}
+= 
+f(S,\bV) + f(T,\bV).
+$$
+To establish the second part of the lemma, note that
+$
+f(\{i,\ldots,j\} ,\bV)
+=
+\frac{\sum_{\ell=i}^j r_\ell \ts e^{V_\ell} }{1 + \sum_{\ell=i}^j e^{V_\ell} },
+$
+which implies that $f(\{i,\ldots,j\} , \bV)$ is a weighted average of $0,r_i,\ldots,r_j$, where the weights associated with each one of these are $1,e^{V_i},\ldots,e^{V_j}$, respectively . By using the same reasoning, $f(\{1,\ldots,j\} , \bV)$ is a weighted average of $0,r_1,\ldots,r_i,\ldots,r_j$, where the weights associated with each one of these are $1,e^{V_1},\ldots, e^{V_i},\ldots,e^{V_j}$, respectively. Since  $r_1 \geq \ldots \geq r_i \geq \ldots \geq r_j \geq 0 $, it follows that  $f(\{1,\ldots,j\} ,\bV) \geq f(\{i,\ldots,j\},\bV)$. %and the second part follows by taking expectations.
+\end{proof}
+
+We are now ready to show Theorem \ref{thm:guarantee-product}
+
+\noindent {\bf Proof of Theorem \ref{thm:guarantee-product}}
+
+\begin{proof} 
+Let $\hat{\bV}^1,\ldots,\hat{\bV}^G$ denote the possible realizations of the mean utility vector $\bV$.  The first part of the approximation guarantee follows immediately from the fact that for each $g = 1, \ldots, G$,  a revenue-ordered assortment solves the problem 
+$\max_{S \subseteq \{1,\ldots,n\}} f(S,\hat{\bV}^g)$, giving us the approximation guarantee of $G$ (see \cite{TalluriVanRyzin:2004}).
+To establish the approximation guarantee of $\lceil n/2 \rceil$, let $S^*$ be the optimal solution to the \ref{eqn:mix} problem. We partition the assortment $S^*$ into $k$ assortments $S_1^*,\ldots,S_k^*$ such that each assortment $S_\ell^*$ contains consecutive products. That is, each assortment $S_\ell^*$ is of the form 
+%
+%
+\begin{align*}
+\{ i_\ell^*, i_\ell^* + 1, \ldots, j_\ell^*\}
+\end{align*}
+%
+%
+for some $i_\ell^*$ and $j_\ell^*$, with $i_\ell^* \leq j_\ell^*$ and  
+$$
+	i_1^* \leq j_1^* ~<~ i_2^* \leq j_2^* ~<~  \ldots ~<~ i_{k-1}^* \leq j_{k-1}^* ~<~ i_k^* \leq j_k^*.
+$$
+Although each $S_\ell^*$ may contain a single product with $i_\ell^* = j_\ell^*$, we observe that the number of assortments~$k$ in the partition never has to be greater than $\lceil n /2 \rceil$.  The desired result follows by 
+%
+%
+\begin{align*}
+Z^* 
+& = \mathbb E \{ f(S^* , \bV )\} 
+= 
+\mathbb E \{ f(\cup_{\ell=1}^k S_\ell^* , \bV ) \}
+\leq 
+\sum_{\ell=1}^k \mathbb E \{ f(S_\ell^* , \bV ) \}
+=
+\sum_{\ell=1}^k \mathbb E \{ f(\{i_\ell^*, \ldots,j_\ell^* \} , \bV) \} 
+\\
+& \leq
+\sum_{\ell=1}^k \mathbb E \{ f(\{1,\ldots,j_\ell^* ,\} , \bV) \} 
+\leq
+\sum_{\ell=1}^k \max_{i = 1,\ldots,n } \mathbb E \{ f(\{1,\ldots,i\} , \bV ) \}
+\leq
+\lceil n / 2 \rceil \max_{i=1,\ldots,n} \mathbb E \{ f(\{1,\ldots,i\} , \bV) \},
+\end{align*}
+%
+%
+where the first and second inequalities use  the first and second parts of Lemma \ref{lem:app_n}, respectively.
+\end{proof}
+
+To see a simple application of Theorem 5.1, consider the case where we serve two customer segments, a price sensitive and a quality sensitive market segment. Price sensitive customers associate the vector of mean utilities $\bm \hat \bV^1 = ( \Vhat_1^1,\ldots, \Vhat_n^1)$ with the products, whereas quality sensitive customers associate the vector of mean utilities  $\bm \hat \bV^2 = ( \Vhat_1^2,\ldots, \Vhat_n^2)$. Theorem \ref{thm:guarantee-product} implies that the expected revenue from the best revenue-ordered assortment is at least half of the optimal expected revenue.
+
+In the next proposition, we show that the approximation guarantee in Theorem \ref{thm:guarantee-product} is tight, so that there are instances of the \ref{eqn:mix} where the expected revenue  from the best revenue-ordered assortment deviates from the optimal by a factor arbitrarily close to $\min\{ G, \lceil n/2 \rceil \}$. 
+
+\begin{prop}[Tight Guarantee]
+\label{pro:tight}
+There are instances  of the \ref{eqn:mix} problem such that the expected revenue from the best revenue-ordered assortment deviates from the optimal by a factor that is arbitrarily close to $\min\{ G, \lceil n/2 \rceil \}$.
+\end{prop}
+
+\begin{proof}
+We  construct a problem instance with $G$ possible realizations of the vector of mean utilities and $n = 2 \ts G -1$ products such that the expected revenue from the best revenue-ordered assortment deviates from the optimal by a factor arbitrarily close to $G = \lceil n /2 \rceil$. To simplify the presentation, we give a problem instance with $G=3$ and $n=5$ such that the expected revenue from the best revenue-ordered assortment deviates from the optimal by a factor arbitrarily close to three. Once we give this problem instance, it is easy to see how to generalize this problem instance to an arbitrary $G$. 
+
+We chose $\delta > 0$ and consider the following instance of the \ref{eqn:mix} problem. There are five products. There are three possible realizations of $\bV$, which we denote by $\hat{\bV}^1$, $\hat{\bV}^2$ and $\hat{\bV}^3$. The next table gives the revenues of the products and the values of $\hat{\bV}^1$, $\hat{\bV}^2$ and $\hat{\bV}^3$. Each column in this table corresponds to a product.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{cccccc}
+\hline
+Product   & 1 & 2 & 3 & 4 & 5  \\
+\hline
+Revenues & $\delta$  & $\delta^2$ & $\delta^3$ & $\delta^4$ & $\delta^5$ \\
+\hline
+$\hat{\bV}^1$ & $- \log \delta$ & $-2  \log \delta$ & $-\infty$ & $-\infty$ & $-\infty$ \\
+$\hat{\bV}^2$ & $-\infty$ & $-\infty$ & $- \log \delta$ & $-2  \log \delta$ & $-\infty$ \\
+$\hat{\bV}^3$ & $-\infty$ & $-\infty$ & $-\infty$ & $-\infty$ & $- \log \delta$  \\
+\hline 
+\end{tabular}
+\end{center}
+
+\noindent The probabilities of observing the three realizations of the vector of mean utilities are $\delta^4 / (\delta^4 + \delta^2 + 1)$, $\delta^2 / (\delta^4 + \delta^2 + 1)$ and $1 / (\delta^4 + \delta^2 + 1)$. 
+
+The next table gives the expected revenue provided by each possible revenue-ordered assortment and the assortment $\{1,3,5\}$. 
+
+
+
+\begin{center}
+\footnotesize
+\begin{tabular}{cl}
+\hline
+$S$ & \multicolumn{1}{c}{$\mathbb E \{ f(S,\bV)\}$} \\
+\hline
+$\{1\}$ &  $\displaystyle \frac{\delta^4}{\delta^4 + \delta^2 + 1} \times \frac{1}{1 + \delta^{-1}}$
+\\
+$\{1,2\}$ & 
+$\displaystyle \frac{\delta^4}{\delta^4 + \delta^2 + 1} \times \frac{2}{1 + \delta^{-1} + \delta^{-2}}$
+\\
+$\{1,2,3\}$ &
+$\displaystyle \frac{\delta^4}{\delta^4 + \delta^2 + 1} \times \frac{2}{1 + \delta^{-1} + \delta^{-2}}
+~~+~~
+\displaystyle \frac{\delta^2}{\delta^4 + \delta^2 + 1} \times \frac{\delta^2}{1 + \delta^{-1} }
+$
+\\
+$\{1,2,3,4\}$ &
+$\displaystyle \frac{\delta^4}{\delta^4 + \delta^2 + 1} \times \frac{2}{1 + \delta^{-1} + \delta^{-2}}
+~~+~~
+\displaystyle \frac{\delta^2}{\delta^4 + \delta^2 + 1} \times \frac{2 \ts \delta^2}{1 + \delta^{-1} + \delta^{-2}}
+$
+\\
+$\{1,2,3,4,5\}$ &
+$\displaystyle \frac{\delta^4}{\delta^4 + \delta^2 + 1} \times \frac{2}{1 + \delta^{-1} + \delta^{-2}}
+~~+~~
+\displaystyle \frac{\delta^2}{\delta^4 + \delta^2 + 1} \times \frac{2 \ts \delta^2}{1 + \delta^{-1} + \delta^{-2}}
++~~
+\displaystyle \frac{1}{\delta^4 + \delta^2 + 1} \times \frac{\delta^4}{1 + \delta^{-1}}
+$
+\\
+$\{1,3,5\}$ &
+$\displaystyle \frac{\delta^4}{\delta^4 + \delta^2 + 1} \times \frac{1}{1 + \delta^{-1}}
+~~~~~~~~\,~~+~~
+\displaystyle \frac{\delta^2}{\delta^4 + \delta^2 + 1} \times \frac{\delta^2}{1 + \delta^{-1}}
+~~~~~~~~\,+~~
+\displaystyle \frac{1}{\delta^4 + \delta^2 + 1} \times \frac{\delta^4}{1 + \delta^{-1}}
+$
+\\
+\hline
+\end{tabular}
+\end{center}
+
+\noindent The two terms in the expected revenue from assortment $\{ 1\}$ can be bounded by $\delta^4 / (\delta^4 + \delta^2 + 1) \leq \delta^4$ and $1 / ( 1 + \delta^{-1}) \leq 1 / \delta^{-1}$. Therefore, the expected revenue from assortment $\{1\}$ is bounded by $\delta^5$.~We bound the two terms in the expected revenue from assortment $\{1,2\}$ as $\delta^4 / (\delta^4 + \delta^2 + 1) \leq \delta^4$ and $2 / ( 1 + \delta^{-1} + \delta^{-2}) \leq 2 / \delta^{-2}$, which implies that the expected revenue from assortment $\{1,2\}$ is bounded by $2 \ts \delta^6$. Continuing in the same fashion, the expected revenues from assortments $\{1,2,3\}$, $\{1,2,3,4\}$ and $\{1,2,3,4,5\}$ are bounded by $2 \ts \delta^6 + \delta^5$, $2 \ts \delta^6 + 2 \ts \delta^6$ and $2 \ts \delta^6 + 2 \ts \delta^6 + \delta^5$, respectively. Therefore, the expected revenue from a revenue-ordered assortment never exceeds $4 \ts \delta^6 + \delta^5$. Noting the expected revenue from assortment $\{1,3,5\}$, the ratio between the expected revenue from the optimal assortment and the expected revenue from the best revenue-ordered assortment is at least 
+%
+%
+\begin{multline*}
+\frac{
+\frac{\delta^4}{\delta^4 + \delta^2 + 1} \times \frac{1}{1 + \delta^{-1}}
++
+\frac{\delta^2}{\delta^4 + \delta^2 + 1} \times \frac{\delta^2}{1 + \delta^{-1}}
++
+\frac{1}{\delta^4 + \delta^2 + 1} \times \frac{\delta^4}{1 + \delta^{-1}}
+}
+{4 \ts \delta^6 + \delta^5}
+\\
+=
+\frac{
+\frac{1}{\delta^4 + \delta^2 + 1} \times \frac{\delta^{-1}}{1 + \delta^{-1}}
++
+\frac{1}{\delta^4 + \delta^2 + 1} \times \frac{\delta^{-1}}{1 + \delta^{-1}}
++
+\frac{1}{\delta^4 + \delta^2 + 1} \times \frac{\delta^{-1}}{1 + \delta^{-1}}
+}
+{4 \ts \delta + 1},
+\end{multline*}
+which can be made arbitrarily close to three by choosing $\delta$ small enough.
+\end{proof}

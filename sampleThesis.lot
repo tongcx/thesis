@@ -1,0 +1,6 @@
+\addvspace {10\p@ }
+\contentsline {table}{\numberline {1.1}{\ignorespaces Computational results for the test problems with one hub.}}{33}
+\contentsline {table}{\numberline {1.2}{\ignorespaces Computational results for the test problems with two hubs.}}{34}
+\contentsline {table}{\numberline {1.3}{\ignorespaces CPU seconds for problem (1.11\hbox {}) when we solve this problem by using constraint generation and when we solve this problem directly by using a linear programming solver.}}{35}
+\contentsline {table}{\numberline {1.4}{\ignorespaces CPU seconds for problem (1.11\hbox {}) for large test problems.}}{36}
+\addvspace {10\p@ }
