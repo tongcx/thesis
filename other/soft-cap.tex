@@ -1,0 +1,103 @@
+\section{Simple rounding algorithm for soft-capacity multiple items lot-sizing
+problem with constant opening cost}
+
+\subsection{Problem statement}
+
+Here we are considering multiple-items lot-sizing problem with
+soft capacity. The assumption we are making here is that
+the ordering cost is the same across time periods.
+
+More specifically, we have time horizon $T$ and each time period
+$s$ is associated with a capacity $C_s$. There are $N$ different
+items and item $i$ has demand $d_{it}$ at time period $t$. If we
+use order at time $s$ to satisfy demand at $t$ for item $i$,
+per unit holding cost is $h_{st}^i$. For each time period $s$,
+if we open it, the opening cost is $K$ and we can at most satisfy
+$C_s$ units of demand from it. However, in the soft capacity
+variant, we can open a time period multiple times.
+
+
+\subsection{Linear Programming forumulation}
+
+We use decision variables $y_s$ to denote how many copies do we
+open order at time period $s$ and $x_{st}^i$ to denote the fraction of
+demands $d_{it}$ served by orders at $s$. Then the following is
+a natural linear programming
+
+\begin{align*}
+\min \quad    & K\sum_s y_s + \sum_{i,t}\sum_{s\le t}
+                d_{it}h_{st}^i x_{st}^i   \\
+\text{s.t.} \quad  & x_{st}^i \le y_s          \\
+              & \sum_s x_{st}^i = 1       \\
+              & \sum_{i,t} d_{it}x_{st}^i \le C_s y_s \\
+              & x \ge 0, y \ge 0
+\end{align*}
+
+
+\subsection{Rounding algorithm}
+
+We know that if opening cost is allowed to vary according
+to time period. Then the natural LP has unbounded integrality
+gap. Here we provide a rounding algorithm for the case
+with fixed ordering cost, which also proves the integrality
+gap of LP is constant.
+
+First, we solve the linear programming and get optimal
+fractional solution $x^*, y^*$. Then we modify $x^*$
+to flow-requirement $z$ in following way:
+for a fixed demand $(i,t)$, we look at its fractional
+assignment, we remove the last $.75$ of it and quadruple
+the first $.25$ of it. Now for each requirement $z_{st}^i$,
+if we can satisfy it within orders between $s$ and $t$
+inclusively, then the holding cost is at most $4$ times
+of the fractional holding cost.
+
+Now we describe how to round $y$. We put all $y^*$ on the number
+axis, then moving from left to right, for every interval of
+length $.25$, we open the one with largest capacity. In the end,
+is there is any remaining, we just discard it. Clearly,
+the total opening cost is at most $4$ times of the fractional
+opening cost.
+
+Now, we just need to prove there is a feasible assignment
+that satisfies requirement $z$ and capacity constraints.
+
+Here, we run the Median Assignment Algorithm in Lordi paper.
+Again, we want to show the algorithm will success. Suppose
+on the contrary, the algorithm fails with some requirement
+$z^i_{\tau\bar t}$. Still let $\bar r$ be the earliest period that
+still has free capacity and let $F = [\tau, \bar r)$. Let $A$
+be all demands within $F$ such that it has positive flow-requirement
+within $F$. By similar argument, we know that all capacity
+in $F$ is used to satisfy $A$ and there isn't enough. We
+want to prove the opposite, that we do have enough capacity.
+
+\begin{claim}
+There is enough capacity in $F$ to satisfy requirement in $A$.
+\end{claim}
+
+\begin{proof}
+First, we look at $F$, and we claim that it opened capacity
+at least four times the fractional capacity within $[\tau+.25,\bar r-.25)$.
+By construction of the algorithm, it at most assigns the first .25 and the
+last .25 to some order outside $F$. For everything else, it opens
+at least four times.
+
+Now, take any demand $(i,t)$, because it has positive
+flow-requirement within $F$, it must has at least .75 fractional
+assignment within $F$. Thus, the intersection of its fractional
+assignment and $[\tau+.25,\bar r-.25)$ is at least .25. This
+is true for any demand $(i,t) \in A$. So take all of them aggregately,
+we know they all have at least .25 fractional assignment in $[\tau+.25,\bar r-.25)$.
+So the total fractional capacity in $[\tau+.25,\bar r-.25)$ is at least a quarter
+of the demands in $A$. But since we opened four times the fractional capacity
+in $[\tau+.25,\bar r-.25)$, we know we have enough capacity.
+\end{proof}
+
+This leads to the main result
+
+\begin{thm}
+There is a 4-approximation to the soft-capacity version of multiple items lot-sizing
+problem with constant opening cost. Moreover, the natural LP has integrality gap
+at most 4.
+\end{thm}

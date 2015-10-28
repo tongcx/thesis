@@ -1,0 +1,84 @@
+\paragraph{Problem}
+We consider the scheduling problem $1 | r_j | \max W_j$.
+In this problem, we have $n$ jobs and job $j$ has process time $p_j$ and release date $r_j$.
+Without lose of generality, we can assume $r_1 \le r_2 \le \ldots \le r_n$.
+We want to schedule these jobs on one machine.
+Job $j$ cannot be started until its release date $r_j$, and it takes $p_j$ for the machine to process it.
+We cannot preempt, i.e. once we start a job, we cannot stop it until it finish.
+
+For each job $j$, let $C_j$ be its completion time,
+then the waiting time $W_j = C_j - r_j - p_j$ is the duration it waits from release until get started.
+We want to find a schedule that minimize the maximum waiting time experienced by any job.
+
+\begin{thm}
+There is a polynomial algorithm to solve $1 | r_j | \max W_j$
+\end{thm}
+
+\paragraph{Structural property}
+First, let's consider the structure of optimal solution.
+Let $S^*$ be the optimal scheduling and let $j$ be the last job in $S^*$.
+
+\begin{lem}
+If $i, k$ are two consecutive jobs in $S^*$ other than $j$ and $i > j, i > k$.
+Then we can swap order of $i,k$ and reach a schedule with no worse objective.
+\end{lem}
+\begin{proof}
+Suppose $i$ is started at time $t$ before swapping, then $t \ge r_i$.
+Since $k$ is released before $i$, so $r_k \le r_i \le t$.
+Let's do the swap and start $k$ exactly at time $t$ and then start $i$ at time $t + p_k$.
+Before or after swap, both jobs will be completed by $t + p_i + p_k$.
+Thus, it won't affect any job after them. Also, we don't need to change anything about jobs before them.
+
+Thus, we only need to analyze what happens to the waiting time of $i,k$.
+Since $k$ is moved forward, it's waiting time decrease. So it won't cause any problem.
+For $i$, its waiting time increase, but let's compare it to that of $j$.
+$i$ is released later than $j$ but is completed before $j$, thus, its waiting time is at most that of $j$.
+Since $j$'s waiting time doesn't change, $i$'s new waiting time is bounded by $W_{max}$ of original schedule.
+In other words, we can do the swap and the schedule won't be worse.
+Of course, if there is any leeway and we can start $k$ earlier than $k$ before $t$,
+then there is no point of not doing it. This may lead to a better overall schedule.
+\end{proof}
+
+By this lemma, what we can do is to repeatedly swap job $n$ backward until it's just before $j$.
+Then we move $n-1$ backward until it's just before $n$.
+In the end, we will be able to reach a ordering of $i_1, \ldots, i_{j-1}, j+1, \ldots, n, j$.
+Here $i_1, \ldots, i_{j-1}$ is a permutation of jobs $1, \ldots, j-1$.
+\section{Single machine scheduling to minimize maximum waiting time}
+Let's call the tail $j+1, \ldots, n, j$ of this schedule a block. We can further invoke the lemma,
+to decompose $i_1, \ldots, i_{j-1}$ into blocks.
+
+\begin{cor}
+The optimal schedule is of structure $S^* = B_1 \cdots B_k$, where each block consists of
+some consecutive jobs in $1, \ldots, n$. In additional, each block will put the smallest
+job in that block at the end and all other jobs in that block before that in natural order.
+
+For example, if $S^* = 12453687$, then $B_1 = 1, B_2 = 2, B_3=453, B_4=6, B_5=87$. 
+\end{cor}
+
+\paragraph{Algorithm}
+We will devise a procedure that, given a target maximum waiting time $W_{max}$, decide whether
+there is a schedule achieve this target. With this, we can use binary search to find
+the optimal $W_{max}$.
+
+The procedure will be based on dynamic programming. Let $f(j)$ be the minimum makespan of
+any schedule of jobs $1, \ldots, j$ such that each job wait at most $W_{max}$.
+Let $f(0) = 0$.
+
+For $j = 1,\ldots, n$, we can compute $f(j)$ as follows. Because we know the optimal schedule
+of $1, \ldots, j$ consists of blocks, we can try to decide the last blocks.
+We can try $i = 1, \ldots, j$ that the last block is $i+1, \ldots, j, i$. After deciding
+the last block, how should we schedule jobs before that? As long as those jobs satisfy the
+waiting time requirement, we just want to minimize their makespan so it's easier to
+schedule the last block. As a result, we can
+schedule jobs $1, \ldots, i-1$ with makespan $f(i-1)$ and then schedule jobs $i+1, \ldots, j, i$
+in that ordering. Then, we examine whether job $i+1, \ldots, j, i$ satisfy the waiting time
+requirement. Among all choice of last block satisfying waiting time requirement, we
+pick the one with minimum makespan and that would be $f(j)$.
+
+By definition, if there is any schedule of all jobs satisfying the waiting time requirement,
+our DP algorithm will be able to find it. This completed our algorithm.
+
+For our binary search, we need a upper bound of $W_{max}$ to begin with.
+If we schedule jobs in order $1,\ldots, n$, it's easy to prove that any job waits
+at most $P = \sum_{j=1}^n p_j$.
+The overall running time is $O(n^3\log P)$.

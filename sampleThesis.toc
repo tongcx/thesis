@@ -2,8 +2,8 @@
 \contentsline {section}{Dedication}{iv}
 \contentsline {section}{Acknowledgements}{v}
 \contentsline {section}{Table of Contents}{vi}
-\contentsline {section}{List of Tables}{vii}
-\contentsline {section}{List of Figures}{viii}
+\contentsline {section}{List of Tables}{viii}
+\contentsline {section}{List of Figures}{ix}
 \contentsline {chapter}{\numberline {1}On the Approximate Linear Programming Approach for Network Revenue Management Problems}{1}
 \contentsline {section}{\numberline {1.1}Introduction}{1}
 \contentsline {section}{\numberline {1.2}Problem Formulation}{5}
@@ -23,4 +23,24 @@
 \contentsline {section}{\numberline {2.2}Model Formulation}{42}
 \contentsline {section}{\numberline {2.3}Performance of Revenue-Ordered Assortments}{44}
 \contentsline {subsection}{\numberline {2.3.1}A Tight Guarantee Based on the Number of Products and Customer Segments}{45}
-\contentsline {chapter}{Bibliography}{50}
+\contentsline {chapter}{\numberline {3}Other results}{50}
+\contentsline {section}{\numberline {3.1}Compute optimal distribution}{50}
+\contentsline {section}{\numberline {3.2}Another primal-dual algorithm for Joint Replenishment Problem}{53}
+\contentsline {subsection}{\numberline {3.2.1}Preliminaries}{53}
+\contentsline {subsection}{\numberline {3.2.2}LP formulation}{54}
+\contentsline {subsection}{\numberline {3.2.3}Algorithm}{55}
+\contentsline {subsection}{\numberline {3.2.4}Analysis}{56}
+\contentsline {section}{\numberline {3.3}Submodular Joint Replenishment Problem}{60}
+\contentsline {subsection}{\numberline {3.3.1}Problem statement}{60}
+\contentsline {subsection}{\numberline {3.3.2}Linear Programming Relaxation}{61}
+\contentsline {subsection}{\numberline {3.3.3}LP based approximation algorithm}{61}
+\contentsline {subsection}{\numberline {3.3.4}$\qopname \relax o{log}n$-approximation algorithm for JRP-D}{63}
+\contentsline {section}{\numberline {3.4}Simple rounding algorithm for soft-capacity multiple items lot-sizing problem with constant opening cost}{64}
+\contentsline {subsection}{\numberline {3.4.1}Problem statement}{64}
+\contentsline {subsection}{\numberline {3.4.2}Linear Programming forumulation}{65}
+\contentsline {subsection}{\numberline {3.4.3}Rounding algorithm}{65}
+\contentsline {paragraph}{Problem}{67}
+\contentsline {paragraph}{Structural property}{67}
+\contentsline {section}{\numberline {3.5}Single machine scheduling to minimize maximum waiting time}{68}
+\contentsline {paragraph}{Algorithm}{69}
+\contentsline {chapter}{Bibliography}{71}

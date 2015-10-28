@@ -1,0 +1,78 @@
+\section{Compute optimal distribution}
+
+Consider the following problem.
+\begin{align}
+\max_{F} \quad & \E_{X \sim F} X^+ \\
+\text{s.t.} \quad & \E_{X \sim F} X = 0    \\
+& \Var_{X \sim F} X = 1
+\end{align}
+That we want to find, among all distribution with mean $0$ and variance $1$, the distribution with maximum expectation over positive part.
+How do you solve this problem?
+
+We can rewrite this problem as a Linear Programming
+\begin{align}
+\max \quad & \int_0^\infty t x(t) dt    \\
+\text{s.t.} \quad & \int x(t) dt = 1    \\
+& \int t x(t) dt = 0    \\
+& \int t^2 x(t) dt = 1  \\
+& x(t) \ge 0
+\end{align}
+Here $x(t)$ is the pdf of distribution we want to optimize.
+This is a Linear Programming with uncountable number of variables.
+
+Take the dual, we get
+\begin{align}
+\min \quad & y_0 + y_2  \\
+\text{s.t.} \quad & y_0 + ty_1 + t^2y_2 \ge t \quad \forall t \ge 0 \label{cons:quad} \\
+& y_0 + ty_1 + t^2y_2 \ge 0 \quad \forall t \le 0 \label{cons:quad2}
+\end{align}
+This Linear Programming has only three variables, but has infinite number of constraints.
+However, this is more tractable than the primal and it's possible to derive solution
+with extensive and boring computation of case analysis.
+
+We take a different route. Now let's focus on constraints (\ref{cons:quad}).
+We can rewrite this as
+\[  \min_{t \ge 0} \, y_0 + t(y_1 - 1) + t^2y_2 \ge 0  \]
+For the minimization problem, the Lagrangian dual problem is
+\[  \max_{\alpha \ge 0} \, \min_t \, y_0 + t(y_1 - 1) + t^2 y_2 - t \alpha    \]
+Since $t$ is unconstrained now, we can easily solve the inner minimization problem
+\begin{align}
+ & \min_t \, y_0 + t(y_1 - 1) + t^2 y_2 - t \alpha   \\
+=& \min_t \, y_2(t - \frac{\alpha + 1 - y_1}{2y_2})^2 + y_0 - \frac{(\alpha + 1 - y_1)^2}{4y_2} \\
+=& y_0 - \frac{(\alpha + 1 - y_1)^2}{4y_2}
+\end{align}
+
+As a result, we have turned constraints (\ref{cons:quad}) into
+\[  \max_{\alpha \ge 0} \, y_0 - \frac{(\alpha + 1 - y_1)^2}{4y_2} \ge 0    \]
+It's easy to show that $y_0 \ge 0, y_2 \ge 0$, thus, this is equivalent to
+\[  \max_{\alpha \ge 0} \, 4 y_0 y_2 \ge (\alpha + 1 - y_1)^2    \]
+Note this is a rotated second order conic constraint.
+We can do the same to constraints (\ref{cons:quad2}), and get
+\[  \max_{\beta \ge 0} \, 4 y_0 y_2 \ge (y_1 + \beta)^2    \]
+
+Now we can rewrite our original problem as
+\begin{align}
+\min \quad & y_0 + y_2   \\
+\text{s.t.} \quad & 4 y_0 y_2 \ge (\alpha + 1 - y_1)^2 \\
+& 4 y_0 y_2 \ge (y_1 + \beta)^2 \\
+& y_0, y_2, \alpha, \beta \ge 0
+\end{align}
+This is a second order conic programming and can be efficiently solved.
+The optimal solution is actually a pretty simple distribution: it takes $-1$ and $1$ with half probability.
+
+In general, we can solve the following problem
+\begin{align}
+\max_{F} \quad & \E_{X \sim F} f(X) \\
+\text{s.t.} \quad & \E_{X \sim F} X = \mu    \\
+& \Var_{X \sim F} X = \sigma^2
+\end{align}
+where $f$ is a piecewise linear function and
+\[ f(x) = c_ix + d_i \quad a_i \le x \le b_i    \]
+If you carry out the derivation similar to what we just did,
+you will reach the following programming,
+\begin{align}
+\min \quad & y_0 + y_2  \\
+\text{s.t.} \quad & 4(y_0 - d_i + a_i \alpha_i - b_i \beta_i) y_2 \ge (y_1 - c_i - \alpha_i + \beta_i)^2 \quad \forall i    \\
+& y_0 - d_i + a_i \alpha_i - b_i \beta_i \ge 0  \quad \forall i \\
+& y_2, \alpha_i, \beta_i \ge 0
+\end{align}

@@ -1,0 +1,65 @@
+\section{Submodular Joint Replenishment Problem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Problem statement}
+Submodular Joint Replenishment Problem is a inventory problem. We have a shop, which holds inventory for a number of items. There are deterministic demands we need to satisfy for discrete time $1,2,\ldots, T$, where $T$ the time horizon. There are $n$ items and we index them by $\{1,2,\ldots, n\}$. In order to satisfy these demand, we can put orders at some time and they can be used to satisfy demand of later time. If we use a order at time $s$ to satisfy demand at a later time $t$ for item $i$, the holding cost we incurred is $H^i_{st}$. To model the order cost, we use a submodular ordering cost function $f(U)$. If we put a order at $s$ consisting a subset of items $U \subseteq [n]$, then we incur order cost $f(U)$.
+
+There are some assumptions we need for this problem. The holding cost $H^i_{st}$ is defined for $s = 1,2,\ldots, t$ and non-increasing for $s$. Also the order cost $f(U)$ is a monotone submodular function, and we assume $f(\emptyset) = 0$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Linear Programming Relaxation}
+The linear programming relaxation of this problem is the following,
+
+\begin{align*}
+\min		\quad 	& \sum f(U) y^U_s + \sum H^i_{st}x^i_{st} \\
+\text{s.t.}	\quad	& \sum_s x^i_{st} = 1 \\
+				& x^i_{st} \le \sum_{U \ni i} y^U_s \\
+				& x^i_{st} \ge 0
+\end{align*}
+
+Here $x^i_{st}$ is the variable indicating whether we use a order at time $s$ to satisfy order $(i,t)$. We use $y^U_s$ to denote whether we put a order consisting of items $U$ at time $s$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{LP based approximation algorithm}
+In this section, we describe how we can use the optimal LP solution to simply the problem. First of all, this LP is of exponential number of variables, but we can use ellipsoid method to solve the dual by using submodular function minimization for separation.
+
+Suppose we solve the LP and obtain optimal fractional solution $\bar y^U_s, \bar x^i_{st}$. Let's first look at some structure of optimal fractional solution. Let $\bar z^i_s = \sum_{i \ni U} \bar y^U_s$ and we can think about this as the fractional service we provided for item $i$ at time $s$.
+
+\begin{lem}
+Fix some time $s$ and then order all items such that $\bar z^1_s \ge \bar z^2_s \ge \cdots \ge \bar z^n_s$. Denote $U_i = \{1,2,\ldots, i\}$, then
+
+\begin{enumerate}
+\item $\bar y^{U_i}_s = \bar z^{i+1}_s - \bar z^i_s$ for $i=1,2,\ldots, n$ and $\bar y^U_s = 0$ for all other $U$.
+\item $\bar z^i_s = \max_t \bar x^i_{st}$
+\end{enumerate}
+\end{lem}
+
+The proof of this lemma is by the greedy algorithm for polymatroid optimization and by fixing $\bar y^U_s$ or $\bar x^i_{st}$ and looking at the other one.
+
+Now let's focus on some item $i$. Let's spread out $\bar z^i_s$, and thus $\bar y^U_s$, over time $[s, s+1]$ uniformly. Then we partition the the time $[1, T+1]$ into disjoint intervals $(a_j, b_j]$ such that each interval (possibly except the last one) has mass $0.5$. For item $i$, denote the set of interval $I_i$.
+
+Now, with the set of intervals $I_i$ for $i \in [n]$, we can construct a restricted instance of submodular JRP-D. We have all these intervals over time $[1, T+1]$ to stab and at any time if we put a order of subset $U$, it will stab all the intervals for items in $U$. Here we relax the requirement to put order at discrete time and we can put orders at any time (but it turns out to be that it only makes sense to put order at some interval's right endpoint).
+
+\begin{lem}
+With a feasible solution of the JRP-D instance, we can construct a feasible solution to our original JRP instance with ordering cost no more than the cost of JRP-D and holding cost less than LP-OPT.
+\end{lem}
+\begin{proof}
+For a order at time $s$ for subset $U$, we round it to be at time $\lfloor s \rfloor$. Then every demand $(i,t)$ must be satisfied by some order in its active interval $[s_1, t]$, where $s_1$ is the earliest time such that $\bar x^i_{st} > 0$.
+\end{proof}
+
+Let the set of right endpoints of any interval in any $I_i$ be $P$ and we number them as $1,2,\ldots, T$. Since it's only sensible to put a order at some time in $P$, we can convert all the interval into the form of $(a, b]$ where $a,b \in P$.
+
+\begin{lem}
+We can convert the fractional solution $\bar y, \bar z$ of JRP to a fractional solution $\hat y, \hat z$ to JRP-D by aggregate all mass of $\bar y, \bar z$ between $(s, s+1]$ to time $s+1$. Then $2\hat y, 2\hat z$ will be a feasible solution to JRP-D. This implies that LP-OPT' is at most twice LP-OPT.
+\end{lem}
+
+This implies if we can devise a $\alpha$-approximation algorithm for JRP-D, then we can obtain $2\alpha+1$-approximation algorithm for JRP.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{$\log n$-approximation algorithm for JRP-D}
+The restricted JRP-D problem we want to solve can be explicitly stated. We have $n$ items and each corresponds to a partition of time horizon $(1,T]$ into disjoint intervals of form $(a,b]$ where $a,b$ are both integers. We can put orders at integer times to stab these intervals. To put a order with the ability to stab the intervals of set of items $U$, we need to pay $f(U)$ cost. We are interested in finding the least costly way to stab all intervals.
+
+We can view this problem as a SET COVER problem by interpreting all intervals as elements to be covered. We index all set by the time of the order $s$ and the subset of items included $U$. The set $(s, U)$ will include all intervals which include $s$ and corresponds to items $U$. Note that at any time $s$, there are exactly $n$ intervals and each corresponds to one item.
+
+We can apply the greedy algorithm on this problem and guarantee would be $\log n$ because any set contains at most $n$ elements. The ability to perform such greedy algorithm depends on our ability to solve
+\[	\min_{U \subseteq A} f(U)/|U|	\]
+where $A$ is the set of active (uncovered) intervals at some time $s$. This can be solved by the push-relabel submodular function minimization algorithm as a parametric SFM with discrete Newton method. We enumerate $s$ to find the most economic choice and pick that set.

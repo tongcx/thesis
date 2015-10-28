@@ -2,3 +2,5 @@
 \contentsline {figure}{\numberline {1.1}{\ignorespaces Minimum-cost network flow problem corresponding to problem (1.6\hbox {}).}}{32}
 \contentsline {figure}{\numberline {1.2}{\ignorespaces Structure of the airline network with one and two hubs for the case with $N=8$.}}{33}
 \addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Example of running algorithm. Here the delay cost is unit cost, $K = 5$, fix ordering cost: triangle 2, circle 2, rectangle 4, star 10, diamond 6}}{58}

@@ -24,15 +24,21 @@
 \usepackage{txfonts}
 \usepackage{palatino}
 \usepackage{bm}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
 
+\newtheorem{defn}{Definition}
+\newtheorem{claim}{Claim}
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{pros}[thm]{Proposition}
 \newtheorem{prop}[thm]{Proposition}
 \newtheorem{lemmas}[thm]{Lemma}
 \newtheorem{cors}[thm]{Corollary}
+\newtheorem{cor}[thm]{Corollary}
 \newtheorem{algs}{Algorithm}
 \newtheorem{theorem}[thm]{Theorem}
 \newtheorem{lemma}[thm]{Lemma}
+\newtheorem{lem}[thm]{Lemma}
 
 %if you're having problems with overfull boxes, you may need to increase
 %the tolerance to 9999
@@ -45,6 +51,9 @@
 \renewcommand{\topfraction}{0.85}
 \renewcommand{\textfraction}{0.1}
 \renewcommand{\floatpagefraction}{0.75}
+
+\DeclareMathOperator*{\E}{\mathbb{E}}
+\DeclareMathOperator*{\Var}{Var}
 
 \title {Your Title Goes Here}
 \author {Chaoxu Tong}
@@ -87,6 +96,7 @@ Your acknowledgements go here. Make sure it sits inside the brackets.
 
 \input{approximate_lp_rm/approximate_lp_rm}
 \input{logit_mixture/logit_mixture}
+\input{other/main}
 
 \bibliography{sampleThesis}
 
