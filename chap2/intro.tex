@@ -1,0 +1,26 @@
+\section{Introduction}
+
+In the classical facility location problem, there is a set of clients and a set of potential facilities. We need to open a subset of facilities and connect each client to a open facility. Opening a facility will incur facility opening cost. Connect a client to open facility will incur connection cost, which is the distance between them. The goal is to minimize the sum of total facility opening cost and total connection cost. It's well known this problem is NP-hard so it's unlikely there is polynomial algorithm that can find optimal solution. As a result, we will focus on approximation algorithm. An $\rho-$approximation algorithm is a polynoimal-time algorithm that delivers a feasbile solution within a factor of $\rho$ of optimum.
+
+This problem is a classical one in supply chain and has been extensively studied in the literature. Researchers have applied randomized rounding \cite{shmoys1997approximation, li20131, chudak2003improved}, primal dual \cite{jain2001approximation}, local search\cite{korupolu2000analysis} and greedy algorithm \cite{jain2003greedy} to this problem. Almost all algorithm techniques have been successfully applied to this problem. Currently, the best approximation guarantee 1.488 comes from \cite{li20131} by randomized rounding.
+
+Despite all the beautiful results on the vanilla version of the problem, it doesn't capture some practical aspects arising in real problem. Some researchers \cite{li2013approximating,jain2001approximation,arya2004local} investigated the variant that there is no facility opening cost, but only $k$ facilities can be open. In the capacitated version of this problem \cite{chudak2005improved,an2014lp,pal2001facility,bansal20125}, each facility has capacity on number of clients they can serve.
+
+In general, the facility opening cost may depend on what clients are served. It's natural that to serve more diverse clients, the facility needs more serving capability. In \cite{mahdian2003universal}, facility cost can depends on the number of clients served in a more general way. \cite{svitkina2006facility} proposed that facility opening cost can be modeled as a submodular function on set of clients served, however, it's unknown whether a constant approximation algorithm exists even for the case when all facilities have the same cost function.
+
+Our work is in line with the above results that different facility may have different serving capability. In the general case, for each client, we can specify the set of facilities that can serve it. However, this problem would be very hard. It's easy to reduce Set Cover Problem to it. We can have one facility for each set and one client for each element and the set inclusion relationship can be used to encode which facility can be used to serve which client. We can put all facilities and clients at the same location so there is no connection cost. Each facility has unit opening cost. We can see that this problem is exactly equivalent to the Set Cover problem.
+
+\begin{thm}
+If there is arbitrary compatibility relationship between facilities and clients, then the extended facility location problem is Set-Cover hard. And there is no constant approximation for this problem \cite{DBLP:journals/corr/abs-1305-1979}.
+\end{thm}
+
+Instead, we look at more tractable cases where each facility and client is assigned a type. There is some partial ordering among types so that a client can be served with open facility of equal or higher types. The structure of this partial ordering will determine the nature of our problems. We consider two problems.
+
+\begin{itemize}
+\item \textbf{Facility Location with Hierarchical Types} In this problem, all types form a tree where the root is on top. The partial ordering is defined such that a type is lower than all its ancestors in the tree where the root is the highest type.
+
+\item \textbf{Pepsi-Coke Facility Location} In this problem, there are only two types of facilities: Pepsi facilities and Coke facilities. There are three types of clients: Pepsi clients, Coke clients and Any-will-do clients. As the names suggest, Any-will-do clients can be served by any facility but the other clients can only be served by facilities of the same type. The partial ordering here is a V shape where no facilities is of the bottom type.
+
+\end{itemize}
+
+We give constant approximation algorithms for each problems. For Facility Location with Hierarchical Types, we should how to extend classical primal dual algorithm to obtain Lagrange Multiplier Preserving algorithm. Then we show how to derive better approximation guarantee by combining primal dual algorithm with other techniques. For Pepsi-Coke Facility Location, we use randomized rounding based on rounding fractional solution of matroid intersection problem.

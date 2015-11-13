@@ -19,7 +19,6 @@
 \usepackage{moreverb}
 \usepackage{subfigure}
 \usepackage{epsfig}
-\usepackage{subfigure}
 \usepackage{hangcaption}
 \usepackage{txfonts}
 \usepackage{palatino}
@@ -39,6 +38,7 @@
 \newtheorem{theorem}[thm]{Theorem}
 \newtheorem{lemma}[thm]{Lemma}
 \newtheorem{lem}[thm]{Lemma}
+\newtheorem{fact}[thm]{Fact}
 
 %if you're having problems with overfull boxes, you may need to increase
 %the tolerance to 9999
@@ -95,9 +95,11 @@ Your acknowledgements go here. Make sure it sits inside the brackets.
 \pagestyle{cornell} \addtolength{\parskip}{0.5\baselineskip}
 
 \input{approximate_lp_rm/approximate_lp_rm}
-\input{logit_mixture/logit_mixture}
-\input{other/main}
+\input{chap2/main}
+\input{chap3/main}
+%\input{logit_mixture/logit_mixture}
+%\input{other/main}
 
-\bibliography{sampleThesis}
+\bibliography{sampleThesis,chap2/myrefs,chap3/ref}
 
 \end{document}

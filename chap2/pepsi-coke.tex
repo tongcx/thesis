@@ -1,0 +1,159 @@
+\section{Pepsi-Coke facility location}
+
+Remember in this problem, there are only two types of facilities: Pepsi facilities and Coke facilities. There are three types of clients: Pepsi clients, Coke clients and Any-will-do clients. As the names suggest, Any-will-do clients can be served by any facility but the other clients can only be served by facilities of the same type. There are three types in total. The partial ordering here is a V shape where no facilities is of the bottom type.
+
+The main difficulty of applying randomized rounding here is that if one cluster has Any-will-do client as center, then it may open any type of facility. However, any client of the other types in the neighborhood of this cluster won't be able to be served via this cluster. We show that how to overcome this difficulty by doing two clustering and couple them using matroid intersection polytope.
+
+\subsection{Algorithm}
+
+The algorithm is based on clustering and randomized rounding.
+The basic ideas is that we can cluster facilities around some center clients
+such that each cluster consists of one center client and some nearby facilities.
+Then we can open one facility in each cluster to satisfy all center clients.
+At the same time, the way we pick center clients will make sure any non-center client will be close to some center client.
+This enable us to serve non-center client through center client by corresponding open facility in that cluster.
+You can find a good explanation in \cite{williamson2011design} Section 5.8.
+
+However, in our case, we need to deal with clients of different types.
+Naive clustering will result in some non-center client not being able to be served through center
+if facility opened for that cluster is of wrong type.
+As a result, we need to do something more delicate.
+
+Now, let's describe the algorithms.
+First, solve the linear programming and get optimal solutions $x^*, y^*, w^*, v^*$.
+Assume here that $x^*_{ij}$ is either $y^*_i$ or $0$ and we need this later.
+This can be achieved by making several copies of facilities as in \cite{chudak2003improved}
+
+\begin{defn}
+We say client $j$ neighbors facility $i$ if $x^*_{ij} > 0$.
+Denote the neighborhood of client $j$ to be $N(j) = \{i \in \mathcal{F}(j) : x^*_{ij} > 0 \}$.
+\end{defn}
+
+Also denote $C(j) = \sum_{i \in \mathcal{F}(j)} x^*_{ij}c_{ij}$
+to be the fractional connection cost for client $j$.
+
+\paragraph{Clustering} The purpose of clustering is to identify a set of center clients and
+ensure each non-center client is close to some center client.
+We will do two clustering here: one for all Pepsi-only and Coke-only clients and another
+for any-will-do clients.
+
+Let $D_1$ be empty in the beginning. We consider client $j \in \mathcal{D}_P \cup \mathcal{D}_C$
+one by one in ascending order by $v_j + C(j)$. If $N(j)$ doesn't intersect with $N(k)$
+for any $k \in D_1$, we add $j$ to $D_1$. After we considered all clients in $\mathcal{D}_P \cup \mathcal{D}_C$,
+we will have our center-clients for the first clustering round.
+
+Let $D_2$ be empty. Then we consider client $j \in mathcal{D}_A$ one by one
+in ascending order by $v_j + C(j)$.
+If $N(j)$ doesn't intersect with $N(k)$ for any $k \in D_2$, we add $j$ to $D_2$.
+In the end, we will have our center-clients for the second clustering round.
+
+\begin{fact}
+Let $D = D_1 \cup D_2$ be the set of center clients from both clustering round.
+For any $j \in D$, $y(N(j)) = 1$.
+\end{fact}
+
+\paragraph{Rounding} We need to decide which facilities to open for each cluster during Rounding phase.
+We'd like to open exactly one facility.
+However, since we have two set of clusters and there could be some client $j \in D_1$ and $k \in D_2$
+sharing the same facility in their neighborhoods, we cannot just randomly open one facility per cluster.
+If we use $z$ to denote our decision on which facility to open,
+meaning that $z_i = 1$ if we want to open facility $i$ and $z_i = 0$ otherwise.
+Then our requirement of opening exactly one facility in each cluster can be expressed as
+
+\begin {align}
+\sum_{i \in N(j)} z_i = 1 &\quad \forall j \in D_1 \\
+\sum_{i \in N(j)} z_i = 1 &\quad \forall j \in D_2 \\
+z_i \ge 0 &\quad \forall i \in \mathcal{F}
+\end{align}
+
+Note that, since $N(j)$'s are disjoint within $D_1$ or $D_2$, we essentially have
+a matroid intersection base polytope for two partition matroids.
+We actually know one fractional point within this polytope:
+let $z^*_i = y^*_i$ if $i \in N(j)$ for any $j \in D$ and $0$ otherwise.
+We will use $z^*$ to select facilities to open.
+
+From \cite{grotschel1981ellipsoid}, we know that we can decompose,
+in polynomial time, $z^*$ into convex combination of polynomial number of vertice of
+the matroid intersection polytope.
+\[  z^* = \sum_{v} \lambda_v z_v    \]
+Here $\{\lambda_v\}$ forms a distribution over vertice $\{z_v\}$.
+In addition, we know matroid intersection polytope is integral \cite{schrijver2003combinatorial},
+meaning that each $z_v$ is binary. Thus, each $z_v$ corresponds to a set of facilities to open.
+
+What we will do for rounding is to sample vertex $z_v$ according to distribution $\{\lambda_v\}$
+and then open the set of facilities corresponding to $z_v$.
+In this way, we make sure that for each center client $j \in D$, we opened exactly one facility in $N(j)$.
+This rounding method is inspired by \cite{swamy2013improved}.
+
+\paragraph{Assignment} We describe here an assignment from clients to opened facilities.
+This is for only analysis purpose: we will show this assignment is feasible and of low cost.
+But you can achieve better cost by assigning each client $j$ to the closest open facility in $\mathcal{F}(j)$.
+This will guarantee no-worse cost than the assignment we analyze.
+
+Now let's describe the assignment to analyze.
+For each center-client $j$, we know exactly one facility $i \in N(j)$
+is opened and we will assign $j$ to $i$.
+For any non-center client $j$, it was classified as non-center during one of the clustering phases
+because, at the time when we consider $j$, some center client $k$ has neighborhood $N(k)$
+intersecting $j$'s neighborhood $N(j)$. We will assign $j$ to the same facility that $k$ was assigned to.
+
+Here we will show that this assignment is feasible, i.e. client is assigned to a facility that can serve it.
+For any-will-do clients, they are fine as long as they're served by some facility, so we don't need to worry about them.
+For a Pepsi-only client $j$, consider the center client $k$ it was assigned to.
+$k$ must be a Pepsi-only client. Because we separated the clustering phase of any-will-do clients
+and other clients, so $k$ must be a Pepsi-only client or Coke-only client.
+But it cannot be Coke-only, because otherwise $N(k)$ are all Coke facilities and it won't intersect with
+$N(j)$ which consists of only Pepsi facilities.
+As a result, we know $k$ is assigned to a open Pepsi facility which can also serve $j$.
+The same argument will work for Coke-only client.
+
+
+\subsection{Analysis}
+
+Now let's analyze the total cost of our algorithm. First about facility opening cost
+
+\begin{lem}
+The expected facility opening cost is at most the fractional facility opening cost
+\[  \sum_{i \in \mathcal{F}} f_i y^*_i  \]
+\end{lem}
+\begin{proof}
+We open facilities corresponds to $z_v$ with probability $\lambda_v$,
+thus the expected facility opening cost is
+\[  \sum_v \lambda_v f^T z_v = f^T z^*  \]
+We also know that $z^* \le y^*$ since only a subset of facilities (all neighbors of center clients)
+are selected to have $z^*_i = y^*_i$ and others have $z^*_i = 0$. Thus,
+the expected facility opening cost is at most $f^T y^*$.
+\end{proof}
+
+Now let's look at connection cost. For any center-client $j$,
+we know that $i \in N(j)$ is opened with probability $z^*_i = y^*_i = x^*_{ij}$,
+so the expected connection cost of $j$ is exactly $C(j)$. For non-center client
+
+\begin{lem}
+For any non-center client $j$, its expected connection cost is at most
+\[  2 v_j + C(j)    \]
+\end{lem}
+\begin{proof}
+Take any non-center client $j$, from last section, we know that there is a center client $k$
+that prevented us to make $j$ a center. This means that there is a facility $i \in N(j) \cap N(k)$.
+Suppose during rounding phase, we opened facility $l \in N(k)$. Then we will assign $j$ to $l$ and let's bound its cost,
+\[  c_{jl} \le c_{ij} + c_{ik} + c_{lk}\]
+By complementary slackness of optimal LP solution, we know that
+\[  c_{jl} \le v_j + v_k + c_{lk}   \]
+Because $c_{lk}$ has expectation $C(k)$, we know
+\[  E c_{jl} \le v_j + v_k + E c_{lk} = v_j + v_k + C(k)    \]
+The fact that we considered $k$ before $j$ means $v_k + C(k) \le v_j + C(j)$, thus,
+\[  E c_{jl} \le 2v_j + C(j)    \]
+\end{proof}
+
+With all this, we know the total expected cost is at most
+\[  \sum_{i \in \mathcal{F}} f_i y^*_i + \sum_{j \in \mathcal{D}} C(j) + \sum_{j \not \in D} 2v_j
+\le LP-OPT + 2 \sum_{j \in \mathcal{D}} v_j \le 3LP-OPT   \]
+
+Note that instead of randomly sample facility to open, we can try all $z_v$ and pick the one
+with lowest total cost. This will guarantee to no more than expected total cost.
+In other words, this derandomize our algorithm and proves the main theorem.
+
+\begin{thm}
+There is a deterministic polynomial 3-approximation algorithm for Pepsi-Coke facility location problem.
+\end{thm}

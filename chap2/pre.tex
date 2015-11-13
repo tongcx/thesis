@@ -1,0 +1,36 @@
+\section{Preliminaries}
+
+In this section, we introduce some definitions and notation to be used throughout this paper.
+
+Let $\mathcal{F}$ be the set of potential facilities that we can open; opening facility $i \in \mathcal{F}$ has associated non-negative cost $f_i$.
+There is also a set of clients $\mathcal{D}$ requiring services. We need to assign each client $j \in \mathcal{C}$ to an open facility.
+The connection cost to serve client $j\in \mathcal{D}$ by facility $i \in \mathcal{F}$ is $c_{ij}$.
+We assume $c_{ij}$ forms a metric and thus triangular inequality holds.
+
+In addition, there is set of types $\mathcal{T}$. These types form some partial ordering. Each facility $i$ has a type $t(i)$ indicating its serving capability. Each client also has a type $t(j)$ specifying its require level. It's required in the solution that any client $j$ is served only by facility $i$ of equal or higher type, i.e. $t(j) \le t(i)$. Denote $\mathcal{F}(j)$ be all facilities that can serve client $j$.
+
+Suppose in the solution, we opened the set of facilities $S$ and we assign client $j$ to $\sigma(j)$. Then the total cost of this solution is
+\[  \sum_{i \in S} f_i + \sum_{j \in \mathcal{D}} c_{\sigma(j)j}    \]
+The first part is total facility opening cost and the second part is total connection cost. The goal is to find a feasible solution with minimum total cost.
+
+Our algorithm and analysis will use linear programming formulations of this problem. We describe them here. The following is the natural linear programming relaxation.
+
+\begin{align}
+\min \quad & \sum_{i \in \mathcal{F}} f_i y_i + \sum_{j \in \mathcal{D}} \sum_{i \in \mathcal{F}(j)} c_{ij}x_{ij} \label{LP:main} \\
+\text{s.t.} \quad & \sum_{i \in \mathcal{F}(j)} x_{ij} \ge 1 \quad \forall {j \in \mathcal{D}} \label{con:P:demand}\\
+& x_{ij} \le y_i    \quad \forall j \in \mathcal{D}, i \in \mathcal{F}(j)   \label{con:P:reliance}\\
+& y_i \ge 0 \quad \forall {i \in \mathcal{F}}   \label{con:P:ynonneg}\\
+& x_{ij} \ge 0 \quad \forall j \in \mathcal{D}, i \in \mathcal{F}(j) \label{con:P:xnonneg}
+\end{align}
+
+Any binary feasible solution would corresponds to a feasible solution. $y_i = 1$ indicates that facility $i$ is open and $x_{ij} = 1$ indicates that client $j$ is served by facility $i$. The set of constraints ensure that we assign the client to a facility which compatible types. Taking the dual, we get the following
+
+\begin{align}
+\max \quad & \sum_{j \in \mathcal{D}} v_j \\
+\text{s.t.} \quad & v_j \le c_{ij} + w_{ij} \quad \forall j \in \mathcal{D}, i \in \mathcal{F}(j)\\
+& \sum_{j: i \in \mathcal{F}(j)} w_{ij} \le f_i \quad \forall i \in \mathcal{F} \\
+& w_{ij} \ge 0  \quad \forall j \in \mathcal{D}, i \in \mathcal{F}(j) \label{con:facility} \\
+& v_j \ge 0 \quad \forall j \in \mathcal{D}
+\end{align}
+
+Here we can intuitively think $v_j$ as budget of client $j$ and $w_{ij}$ as how much client $j$ contributes towards opening facility $i$. The first set of constraints say that the budget can be  to cover both connection cost and contribution toward opening facilities. The second set of constraints say that the total contribution toward one facility cannot exceed its opening cost.

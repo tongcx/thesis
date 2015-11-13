@@ -1,0 +1,49 @@
+\section{System dynamics}
+
+In this section, we introduce the dynamics of the system. There are several type of entities in the system: patients, sites, machines. We are going to discuss each type of entities and how to describe their status in the system. More importantly, we will describe those events corresponding to interaction between these entities.
+
+\subsection{Entities and states}
+
+\paragraph{Sites} There are multiple sites in our system. Each site also have one or more machines. We assume all machines are homogeneous and are capable of processing any patients. In reality, this is not entirely true, but the difference between machines are quite small so we think the difference can be safely ignored. There is also a single waiting room in each site. Patients who have come but haven't began their scans will stay in waiting room. The time they spend in waiting room is the main metric we are concerned with in this article.
+
+\paragraph{Machine} Each machine is located in certain site. Each machine can process one patient at any time, also once a scan is started, it cannot be preempted. For the machine, the status is whether it's currently occupied or not. In addition, if it's occupied, then which patient is under scan and for how long are also tracked in our system.
+
+\paragraph{Appointment} The main way hospital schedule resources allocation is by appointments. Patients usually schedule their appointments about two weeks in advance. At the beginning of the day, we will know the schedule of the day, which will be a list of appointments. Each appointment contains the time, the site and the type of the scan for that appointment. Patient are supposed to go to the site at appointment time. The hospital people can also access various information of the patients like their medical history and the assigned scan protocol by radiologist. Current progress is compared with schedule by practitioners to gauge whether it's running behind or ahead of the schedule.
+
+Appointments are the central entities in the system. We will track several states of them.
+\begin{itemize}
+\item Appointment time. This is the time patient is supposed to come. Sometimes, an appointment may be rescheduled to other times, and this state will change accordingly.
+\item Appointment status. This could be "scheduled but patient hasn't shown up", "patient arrived at facility and is waiting", "patient under scan", "scan finished and patient left", "canceled"
+\item Site. This is the site the patient is supposed to go to. We assume patients will go to sites that they're assigned to. Although in reality, sometimes patients show up in a different site, but it's extremely rare so we don't consider it.
+\item Scan type. Which type of scan will be performed on patients. This is determined by the patient's diagnosis need and is decided when call center is scheduling for the appointment. Practitioners have working knowledge on estimating duration of scans based on its type. Sometimes, they can have a pretty good estimate on how much congestion may occur based on the schedule and all scan types of that day.
+\item Machine used. If patient is under scan, then we will track which machine is used.
+\item Arrival time, begin time and finish time. We will track progress of appointments. These statistics can help us to figure out what contributes to problems occurred in the system. Whether it's patients arrive too late or scans take too long. In addition, we can make prediction on future based on statistics we collected.
+\end{itemize}
+
+\paragraph{Time} Of course, we also need to keep track of current time.
+
+
+\subsection{Dynamics and Events}
+
+The whole system will evolve throughout the day and states of various entities will change. All of these are driven by events happening throughout the day. We will describe those events that drive the changes and the randomness associated with them.
+
+\paragraph{Patient arrival} Patients will come to the facility that he/she is assigned to. However, patients may not come at their appointment time, they may come early or later. This will introduce some randomness to the system through uncertainty of patients' arrival time. After they come, they will be seated at the waiting room until there is available machine to process him/her. There is another type of patients called same day add-on patient (SDAOP). They are emergent cases that will simply show up without appointments. In other words, they will be surprises to our system since we don't a prior know about them and we don't have idea on when will they come and what type of scans they need to do.
+
+\paragraph{Appointment cancellation} Some patients with appointment may cancel their appointment by calling hospital. This will result in
+removing this patient from schedule. They may reschedule their appointment to some future day, but we don't need to consider this since it's going to be another day. Both who will cancel their appointments and when will they make the phone call are uncertain. Cancellation may result in resource idling if no patients are there to fill the gap. But on the other hand, if the site is already running behind schedule, cancellation will help it catch up and reducing waiting time of patients downstream.
+
+\paragraph{Scan begin} After patients come to the facility, they will be placed in waiting room. Once a machine become available, the next patient will be called in for his/her scan. This is a scan begin event. We're assuming that we prioritize patients according to their appointment time, i.e. people with earlier appointment time will be processed first. This is not entirely true in reality, when a patient comes late and miss their appointment, the hospital may put him/her to wait and process other patients first. The rationale is that they don't want to make patients who haven't done anything wrong wait. As a result, the late patient may need to wait for long time for a open slot. Although our policy doesn't exactly reflect the reality, but it's very close to what happens and make the computation much more straightforward.
+
+\paragraph{Scan completion} When patients finish their scans, there would be completion event. In this case, patients will leave the system and the machine will become available to process other patients if there is any patient in waiting room. The randomness introduced here is the scan duration. Scan duration may be the most important randomness in the system. It's highly variable, which may cause lots of congestion. This is also the factor motivate us to develop this system.
+
+
+\subsection{Simulation}
+
+We use simulation to investigate dynamics of the system and evaluate the system performance. Here we describe briefly about our simulation system.
+
+You have already seen in this section that the whole system can be modeled as discrete event system where entities interact with each other through events. We do use discrete event simulation here. However, to be able to do so, we need to have some information about the system in reality so that we can construct similar system in simulation. Fortunately, we have access to data collected by hospital on historical scans done there for 3 years. This enables us to conduct simulation in realistic scenarios.
+
+\paragraph{Schedule} We look at the historical schedules and their patterns. We construct schedule accordingly. We know which scans are popular and their percentage among all scans. We also know how tight the schedules are for different sites.
+\paragraph{Uncertainty} Both when patients come and how long their scans take are uncertain. We collect distributions on these information and use them in simulation. Note here we will estimate scan duration for each type of scans.
+\paragraph{Unexpected events} From historical data, we can estimate the rate of Same Day Add-on patients and cancellation. We use these rate to randomly generate these unexpected events in simulation.
+
