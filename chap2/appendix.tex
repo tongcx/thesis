@@ -1,0 +1,30 @@
+\begin{center}
+\textbf{APPENDIX}
+\end{center}
+
+\section{Set-cover hardness with a general partial order}
+\begin{proof}
+%In the general case we can specify for each client the set of facilities that can serve
+%it, 
+We prove here that the problem with a general partial order over types is set-cover
+hard. Take any set cover instance with universe $E$ and family $\mathcal{S}\subseteq 2^E$
+of subsets. %We construct a general 
+Our facility location instance is as following: for each element $e \in E$, we have a
+client; for each set $S \in \mathcal{S}$, we have a facility with opening cost 1. 
+Every client and facility has a distinct type. The partial order is simply: 
+$t(S)\geq t(e)$ iff element $e$ lies in set $S$. 
+%and it can serve all clients corresponding to elements it contains. 
+All facilities and clients are located at the same location, so
+there is no assignment cost. It is easy to see that this facility-location instance with a
+general partial order is equivalent to the original Set Cover instance. Thus, facility
+location with a general partial order is set-cover hard and does not admit an
+approximation algorithm with sub-logarithmic guarantee unless P equals NP. 
+\end{proof}
+
+\section{Relation to RAFL in \cite{DBLP:journals/corr/abs-1110-4150}}
+
+In \cite{DBLP:journals/corr/abs-1110-4150}, the authors considered RAFL problem where there is a set of facilities where we can install services. Each client $j$ needs a subset of services $D(j)$ and these sets form a laminar family. We want to decide which services to install for each facility and assign each client $j$ to a facility with all of $D(j)$ installed. Each facility has a cost parameter $f_i$ and installing set of services $P$ on it costs $|P|f_i$. The assignment cost for client $j$ to facility $i$ is $|D(j)|c_{ij}$ where $c_{ij}$ is the underlying metric. The authors presented a 27-approximation algorithm based on rounding.
+
+Here we show how to reduce RAFL problem to our problem and, thus, it admits a 1.85-approximation algorithm. Since the demand services set $D(j)$ are laminar, we can construct a tree out of it, corresponding to the type tree in our case. Then for each facility, we can replace it with several copies, each corresponding to open a set of services in the tree. The type of clients are determined by their demand service set $D(j)$. Then the type requirement will correspond to installing enough services for any client. The last difference is that in their setting, the assignment cost is proportional to the size of demand service set. We can account for this difference by replacing each client $j$ with $|D(j)|$ copies of the same type. In the final solution, they will all be served by the same facility.
+
+Note that in our setting, facility opening cost is arbitrary and is more flexible than that in \cite{DBLP:journals/corr/abs-1110-4150}.

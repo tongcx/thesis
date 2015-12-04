@@ -1,27 +1,27 @@
-\section{Facility Location of Hierarchical Types}
+\section{Facility location with hierarchical types}
 
-Remember in this problem, the types form a tree where the root is on top. The partial ordering between types is specified by ancestor relationship in the tree: a type is lower than all of its ancestors. This models a hierarchical structure where facility higher up in the hierarchy can be used to serve all clients of types in the subtree. We will first present a simple 3-approximation algorithm as extension of classical primal dual algorithm. Then we will show how to combine this with randomized rounding and cost scaling to achieve 1.85-approximation algorithm.
+We first consider the facility problem with hierarchical types, in which the types form a rooted tree with the root; type $t \le t'$ if $t'$ is on the path from $t$ to the root. This models a hierarchical structure where facility higher up can serve more kinds of clients. The assignment cost $c_{ij}$ correspond to a symmetric metric on $\cal{F} \cup \cal{D}$.
 
-\subsection{Simple 3-approximation algorithm}
+We first present a simple 3-approximation algorithm extending the classical primal-dual
+algorithm. We next show how to combine this with randomized rounding and cost scaling to
+achieve a 1.85-approximation. %algorithm.
 
-The algorithm follows standard Jain-Vazirani \cite{jain2001approximation} approach and operates in two phases.
+\subsection{A simple 3-approximation algorithm}
 
-\paragraph{Dual ascent phase}
-In this phase, we construct an feasible solution to the dual linear programming and,
-at the same time, a tentative (infeasible) solution to the primal problem.
-We will construct an feasible primal solution later based on the tentative solution.
+The algorithm follows the standard Jain-Vazirani \cite{jain2001approximation} approach and operates in two phases.
 
-Initially we set all dual variables $v_j = 0$ and all clients are active.
-We keep increase $v_j$ for all active clients in uniform rate until one of the following events happens
+\textbf{Dual ascent phase}
+In this phase, we simultaneously construct a feasible solution to the dual linear program and a tentative solution to the primal, which will serve as the basis for our final primal solution.
+
+Initially, we set each dual variable $v_j = 0$ and each client is active. We increase $v_j$ for each active client at a uniform rate until one of the following events happens:
 
 \begin{itemize}
 \item \textbf{Event 1} When $v_j = c_{ij}$, for some $i \in \mathcal{F}(j)$ and $i$ is not tentatively open,
 we cannot increase $v_j$ any more without increasing $w_{ij}$.
 Thus, we start to increase $w_{ij}$ along with $v_j$ at the same rate.
 
-\item \textbf{Event 2} When $\sum_{j: i \in \mathcal{F}(j)} w_{ij} = f_i$, we cannot increase corresponding $v_j$ any more.
+\item \textbf{Event 2} When $\sum_{j: i \in \mathcal{F}(j)} w_{ij} = f_i$, we can no longer increase the corresponding $v_j$.
 So we tentatively open facility $i$ and mark an active client $j$ inactive if $v_j \ge c_{ij}$ and $i \in \mathcal{F}(j)$.
-In this way, we stop to increase $v_j$ for these clients so we don't violate constraints (\ref{con:facility}).
 
 \item \textbf{Event 3} When $v_j = c_{ij}$, for some $i \in \mathcal{F}(j)$ and $i$ is tentatively open,
 we mark $j$ to be inactive.
@@ -30,204 +30,173 @@ we mark $j$ to be inactive.
 The process ends when all clients are inactive.
 
 \begin{defn}
-We says client $j$ contributes to facility $i$ if $w_{ij} > 0$.
-We says client $j$ is frozen by facility $i$ if we mark $j$ inactive during Event 1 or Event 3.
+We say that client $j$ {\it contributes} to facility $i$ if $w_{ij} > 0$.
+We say that client $j$ is {\it frozen by} facility $i$ if we mark $j$ inactive during Event 1 or Event 3 corresponding to facility $i$.
 \end{defn}
 
-Note that for any tentatively open facility $i$, if we take all contributing clients,
-their budget can cover opening cost $f_i$ plus their connection cost to $i$.
-It seems we can open all tentatively open facilities and assign all clients to the facility frozen it.
-However, the problem is that each client can contributes to multiple tentatively open facilities,
-thus we can use budget of some clients multiple times, which makes it hard to bound the total facility opening cost.
-This is the reason why we need the Pruning Phase to select some facilities to open.
+For any tentatively open facility $i$, if we take all budgets of its contributing clients, it's enough to cover the opening cost $f_i$ plus their assignment cost to $i$. However, the reason we cannot simply open all tentatively open facilities is we may spend the budget of some client multiple times if it contributes to several tentatively open facilities, making it hard to bound our cost against the dual solution. This motivates us to perform the Pruning Phase open facilities more selectively.
 
-\paragraph{Pruning phase}
+\textbf{Pruning phase}
+In this phase, we maintain a set $D$ which we denote as \textit{center clients}. We consider each type $t$ in our tree $\mathcal{T}$ one by one with top-down ordering, each corresponding to one pass. During the pass for type $t$, we look at each tentatively open facility $i$ of type $t$. We permanently open facility $i$ and pay its opening cost $f_i$ if all contributing clients $j$ are not marked centers yet ($j \not \in D$). Then we mark all contributing clients of facility $i$ to be centers, adding them to $D$. On the other hand, if there is one contributing client $j \in D$, then we don't open facility $i$ and move to the next facility.
 
-In this phase, we consider the type tree $\mathcal{T}$ in top-down fashion,
-i.e. we process type $t$ before type $s$ if $t > s$ in the type tree $\mathcal{T}$.
-Also we will maintain a set $D$ which is the set of clients that we will use their budgets to cover facility opening cost.
-When processing type $t \in \mathcal{T}$, we look at each tentatively open facility $i$ of type $t$.
-We permanently open facility $i$ and pay its opening cost $f_i$
-if all contributing clients $j$ are not marked centers yet ($j \not \in D$).
-Then we mark all contributing clients of facility $i$ to be centers, adding them to $D$.
-On the other hand, if there is one contributing client $j \in D$, then we don't open facility $i$ and move to the next facility.
+%In the end, 
+Finally, we assign each client to the closest open facility $i$ with $i \in \mathcal{F}(j)$.
 
-In the end, we assign each client to the closest facility $i$ with $i \in \mathcal{F}(j)$.
+\subsection{The analysis}
 
-\subsection{Analysis}
-
-For our solution, let $F$ be the total facility opening cost and let $C$ be the total connection cost.
+For our solution, let $F$ be the total facility opening cost and let $C$ be the total assignment cost.
 Let $OPT$ be the optimal solution's cost.
-Now we want to prove the primal dual algorithm is Lagrange Multiplier Preserving 3-approximation, which means
-\[  3F + C \le 3 OPT    \]
+Now we want to prove the primal-dual algorithm is a Lagrangian-multiplier-preserving 3-approximation, which means
+$3F + C \le 3 OPT$. 
 
-To demonstrate this, we show a particular way of assigning clients to open facilities will have small cost.
-Thus, assigning clients to closest facility which can serve it will result in no more cost.
-
-Remember $D$ is the set of clients marked centers during Pruning Phase.
-Let $S$ be the set of facilities that we permanently open in the end.
-For each permanently open facility $i \in S$, let $Pay_i$ be the set of its contributing clients.
-We know $D = \cup_{i \in S} Pay_i$.
-Because of the way we open facilities during Pruning Phase
+We show a particular way of assigning clients to open facilities is of low cost, which also
+bounds the cost of assigning clients optimally to the open facilities. 
+%Thus, assigning clients optimally given open facilities will incur no more cost.
+%
+Recall that $D$ is the set of \textit{center clients}. Let $S$ be the set of facilities
+that we permanently open in the end. For each permanently open facility $i \in S$, let
+$N(i)$ be the set of its contributing clients. We know $D = \cup_{i \in S} N(i)$. Our
+pruning phase immediately yields the following.
 
 \begin{fact}
-For two permanently open facilities $i, l$, we know $Pay_i, Pay_l$ are disjoint.
+For two permanently open facilities $i, \ell$, $N(i)$, $N(\ell)$ are disjoint.
 \end{fact}
 
-Thus, for any $i \in S$, we can assign $Pay_i$ to $i$.
-Note for any $j \in Pay_i$, we know $w_{ij} > 0$ and this implies $i \in \mathcal{F}(j)$ so $i$ is capable of serving $j$.
-we can pay for the total cost with the budgets of $Pay_i$ because
-
-\[  f_i = \sum_{j \in Pay_i} w_{ij} = \sum_{j \in Pay_i} (v_j - c_{ij}) \]
-
+Thus, for any $i \in S$, we can assign $N(i)$ to $i$.
+Note for any $j \in N(i)$, we know $w_{ij} > 0$ and this implies $i \in \mathcal{F}(j)$ so $i$ is capable of serving $j$.
+we can pay for the total cost with the budgets of $N(i)$ because
+%
+$f_i = \sum_{j \in N(i)} w_{ij} = \sum_{j \in N(i)} (v_j - c_{ij})$.
+%
 Rearranging terms, we get
+%
+$f_i + \sum_{j \in N(i)} c_{ij} = \sum_{j \in N(i)} v_j$.
 
-\[ f_i + \sum_{j \in Pay_i} c_{ij} = \sum_{j \in Pay_i} v_j \]
-
-Since $Pay_i, Pay_l$ are disjoint for different facilities $i, l \in S$, we know we never spend any client twice.
-
-We still need to bound the connection cost of remaining clients $\bar D = \mathcal{D} \backslash D$.
-
+Since $N(i), N(\ell)$ are disjoint for different facilities $i, \ell \in S$, we know we never double-spend any client's budget.
+%
+We next bound the assignment cost of the remaining clients $\bar D = \mathcal{D} \backslash D$.
 \begin{lem}
-For any client $j \in \bar D$, there is a open facility $i \in \mathcal{F}(j)$ and $c_{ij} \le 3v_j$.
+For any $j \in \bar D$, there is an open $i \in \mathcal{F}(j)$ and $c_{ij} \le 3v_j$.
 \end{lem}
-
 \begin{proof}
-Consider the facility $i$ which frozen client $j$. If $i \in S$, then we can just assign $j$ to $i$ and $c_{ij} \le v_j$ and we are done.
+Consider the facility $i$ which froze client $j$. If $i \in S$, then we can just assign $j$ to $i$ and $c_{ij} \le v_j$ and we are done.
 
-If $i$ is not opened, that means there is a client $k$ contributing to both $i$ and some open facility $l$. Since $k$ contributes to $i$, we know $t(k) \le t(i)$. For same reason, we know $t(k) \le t(l)$. This means in our type tree $\mathcal{T}$, either $t(i) \le t(l)$ or $t(i) \ge t(l)$.
-We already know $t(i) \ge t(j)$ since $j$ is frozen by $i$, so if $t(l) \ge t(i)$, then $l$ is capable of serving $j$.
-Suppose on the contrary, $t(l) < t(i)$, then it means in our Pruning Phase, we should consider opening facility $i$ before facility $l$
-since we consider all types in top-down fashion.
-This contradicts the fact that $i$ is not opened because of facility $l$.
-Thus, we know $l$ is capable of serving $j$.
+If $i$ is not opened, that means there is a client $k$ contributing to both $i$ and some open facility $\ell$. Since $k$ contributes to $i$, we know $t(k) \le t(i)$. For same reason, we know $t(k) \le t(\ell)$. This means in our type tree $\mathcal{T}$, either $t(i) \le t(\ell)$ or $t(i) \ge t(\ell)$.
+We already know $t(i) \ge t(j)$ since $j$ is frozen by $i$, so if $t(\ell) \ge t(i)$, then $\ell$ is capable of serving $j$.
+Suppose on the contrary, $t(\ell) < t(i)$, then it implies in our Pruning Phase, we should consider opening facility $i$ before facility $\ell$, since we consider all types in top-down fashion. This contradicts the fact that $i$ is not opened because of facility $\ell$.
+Thus, we know $\ell$ is capable of serving $j$.
 
 Finally, we need to bound the cost of assigning $j$ to $l$. We know
-\[  c_{jl} \le c_{ij} + c_{ik} + c_{lk} \le v_j + v_k + v_k = v_j + 2v_k    \]
+\[  c_{j\ell} \le c_{ij} + c_{ik} + c_{\ell k} \le v_j + v_k + v_k = v_j + 2v_k .   \]
 Let's consider the relationship between $v_j$ and $v_k$.
-We know $k$ contributes to $i$, thus, $k$ must become inactive at the same or earlier than when we tentatively open $i$ during Dual Ascent phase.
+We know $k$ contributes to $i$, and so $k$ must become inactive at the same or earlier than when we tentatively open $i$ during Dual Ascent phase.
 Otherwise, when we tentatively open $i$, we will freeze $j$ at the same time.
-On the other hand, since $i$ frozen $j$, we know $j$ becomes inactive at the same time or later than we tentatively open $i$.
-As a result, we know $v_k \le v_j$ and thus
-\[  c_{jl} \le 3v_j \]
+On the other hand, since $i$ froze $j$, we know $j$ becomes inactive at the same time or later than we tentatively open $i$.
+So $v_k \le v_j$ and thus
+$c_{j\ell} \le 3v_j$.
 
 \end{proof}
 
 \begin{thm}
-The primal dual algorithm is Lagrange Multiplier Preserving 3-approximation.
+The primal-dual algorithm is a Lagrangian-multiplier-preserving 3-approximation algorithm.
 \end{thm}
 \begin{proof}
-Let $F$ be total facility opening cost and $C$ be total connection cost.
-Also for a set of clients $P$, let $C(P)$ denote the connection cost for $P$.
-Since the budget of $D$ can cover all facility opening cost and the connection cost for $D$, we know
-\[  F + C(D) = v(D) \]
-We also know that for any client $j \in \bar D$, $C(j) \le 3 v_j$, thus
-\[  3F + C = 3F + C(D) + C(\bar D) \le 3F + 3C(D) + C(\bar D) \le v(D) + 3v(\bar D) \le 3v(\mathcal(D)) \le 3 OPT  \]
+Let $F$ be the total facility opening cost and $C$ be the total assignment cost.
+Also, for a set of clients $P$, let $C(P)$ denote the assignment cost for $P$.
+Since the budget of $D$ can cover all facility opening costs and the assignment cost for $D$, we know
+$F + C(D) = v(D)$.
+We also know that for any client $j \in \bar D$, $C(j) \le 3 v_j$, and thus
+\[  3F + C \le 3F + 3C(D) + C(\bar D) \le 3v(D) + 3v(\bar D) = 3v(\mathcal(D)) \le 3 OPT. \]
+The final inequality comes from the fact $v$ is a feasible solution to the dual LP, and thus yields a lower bound on the optimal LP value, which is in turn a lower bound on the optimal solution's total cost.
 \end{proof}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Refined algorithm}
+\subsection{An improved algorithm}
 
-In this section, we show how to improve the approximation constant to 1.85.
-In our analysis for the primal dual algorithm, we paid expensive prices to
-assign clients in $\bar D$ to its facility.
-The reason is that they are connected to facilities with three hops away.
-To improve the constant, we use the idea of randomized rounding\cite{chudak2003improved}
-to open some more facilities so that clients in $\bar D$ have some probability
-to be assigned to a nearby facility.
-To future balance the final facility opening cost and connection cost,
-we also borrow ideas of cost scaling from \cite{charikar2005improved}.
+In this section, we show how to improve the approximation constant to 1.85. In our analysis for the primal-dual algorithm, we paid an expensive assignment cost on $\bar D$ for sending them to facilities three hops away. We use the idea of randomized rounding~\cite{chudak2003improved} to open some more facilities so that clients in $\bar D$ may be served nearby. To further balance the final facility-opening and assignment costs, we also utilize cost-scaling ideas~\cite{charikar2005improved}.
 
-\paragraph{Algorithm}
+\textbf{Algorithm}
 There are two constants $\alpha > 1, \beta$ that we will specify later.
 
 \begin{enumerate}
-\item Run primal dual algorithm on modified instance
-where we scale down all facility opening cost from $f_i$ to $f_i/\alpha$.
-Let $v^\alpha$ be the dual budget produced,and let $D^\alpha$ be the set of  clients.
-\item Solve the linear programming of the original instance and get optimal fractional solution $x^*, y^*$.
+\item Run the primal-dual algorithm on a modified instance
+where we rescale each facility opening cost from $f_i$ to $f_i/\alpha$.
+Let $v^\alpha$ be the dual budget produced,and let $D^\alpha$ be the set of center clients.
+\item Solve the linear program for the original instance and get an optimal fractional solution $x^*, y^*$.
 For each facility $i \in \mathcal{F}$, independently open it with probability $\min\{1, \beta y^*_i\}$
-if it's not open during the primal dual algorithm.
-\item Assign each client to closest open facility $i$ with $i \in \mathcal{F}(j)$.
+if it's not opened by the primal-dual algorithm.
+\item Assign each client to its closest open facility $i$ in $\mathcal{F}(j)$.
 \end{enumerate}
 
 
-\paragraph{Analysis}
-Since the primal dual algorithm will always produce a feasible solution
-that any client can find a facility that can serve it,
-we only need to make sure the cost is okay.
+\textbf{Analysis}
+Since the primal-dual algorithm will always produce a feasible solution, we only need to bound its total cost.
 
-Let $C(j)$ be the random connection cost of client $j$,
-also let $C^*(j) = \sum_{i \in \mathcal{F}(j)} x_{ij}^* c_{ij}$ be its connection cost of the optimal fractional solution.
+Let $C(j)$ be the random assignment cost of client $j$,
+also let $C^*(j) = \sum_{i \in \mathcal{F}(j)} x_{ij}^* c_{ij}$ be its assignment cost in the optimal fractional solution.
 
-First let's analyze the connection cost for non-center clients $\bar D^\alpha$.
-From \cite{chudak2003improved} we have the following lemma
+First let's analyze the assignment cost for non-center clients $\bar D^\alpha$.
 
 \begin{lem}
-Take any client $j \in \mathcal{D}$,
-let $A_j$ denote the event that there is at least one facility $i$ with $x_{ij} > 0$ opened during randomized rounding.
+\cite{chudak2003improved} Take any client $j \in \mathcal{D}$;
+let $A_j$ denote the event that there is at least one facility $i$ with $x^*_{ij} > 0$ opened during randomized rounding.
 Then we know
-\[  P(A_j) \ge 1 - \exp(-\beta) \]
+$P(A_j) \ge 1 - e^{-\beta}$
 and
-\[  E[C(j) | A_j] \le C^*(j)    \]
+$E[C(j) | A_j] \le C^*(j)$.
 \end{lem}
 
-Now we can bound the expected connection cost for non-center clients $j \in \bar D$.
+We bound the expected assignment cost for non-center clients $j \in \bar D^\alpha$.
 
 \begin{lem}
-Take any non-center client $j \in \bar D^\alpha$,
-\[  E[C(j)] \le (1-\exp(-\beta)) C^*(j) + 3\exp(-\beta)v^\alpha_j \]
+For any non-center client $j \in \bar D^\alpha$, we have
+$E[C(j)] \le (1-e^{-\beta}) C^*(j) + 3e^{-\beta}v^\alpha_j$.
 \end{lem}
 
 \begin{proof}
-When $C^*_j \ge 3 v^\alpha_j$, we can always assign $j$ to a facility within distance $3 v^\alpha_j$, thus
-\[  E[C(j)] \le 3 v^\alpha_j \le (1-\exp(-\beta)) C^*(j) + 3\exp(-\beta)v^\alpha_j  \]
-In the other case when $C^*_j \le 3 v^\alpha_j$, we assign $j$ to the closest facility in $\mathcal{F}(j)$
+When $C^*_j \ge 3 v^\alpha_j$, we can always assign $j$ to a facility within distance $3 v^\alpha_j$; thus
+$E[C(j)] \le 3 v^\alpha_j \le (1-e^{-\beta}) C^*(j) + 3e^{-\beta}v^\alpha_j$. 
+
+In the other case when $C^*_j \le 3 v^\alpha_j$, we assign $j$ to its closest facility in $\mathcal{F}(j)$
 opened during randomized rounding if $A_j$ happens, and we know $E[C(j) | A_j] \le C^*(j)$.
-However, if $A_j$ didn't happen, we can still use the facility in primal dual algorithm and pay at most $3v^\alpha_j$.
+However, if $A_j$ didn't happen, we can still use the facility in the primal-dual algorithm and pay at most $3v^\alpha_j$.
 Thus,
 \begin{align*}
 E[C(j)] &= E[C(j)|A_j]P(A_j) + E[C(j)|\bar A_j]P(\bar A_j)  \\
 &\le C^*(j)P(A_j) + 3v^\alpha_j (1 - P(A_j)) \\
 &= 3v^\alpha_j - (3v^\alpha_j - C^*(j)) P(A_j) \\
-&\le 3v^\alpha_j - (3v^\alpha_j - C^*(j)) (1 - \exp(-\beta)) \\
-&= (1-\exp(-\beta)) C^*(j) + 3\exp(-\beta)v^\alpha_j
+&\le 3v^\alpha_j - (3v^\alpha_j - C^*(j)) (1 - e^{-\beta}) 
+= (1-e^{-\beta}) C^*(j) + 3e^{-\beta}v^\alpha_j
 \end{align*}
 \end{proof}
 
 Now, we can calculate the total cost incurred.
 \begin{itemize}
-\item During the primal dual algorithm,
-the (scaled) facility opening cost and connection cost of center clients $D^\alpha$
+\item During the primal-dual algorithm,
+the (scaled) facility opening cost and assignment cost of center clients $D^\alpha$
 can be covered by $v^\alpha(D^\alpha)$. Thus, $\alpha v^\alpha(D^\alpha)$ is
-enough to cover this part of cost with original facility opening cost.
-\item During the randomized rounding, we incur expected facility opening cost
+enough to cover this part of cost with the original facility opening cost.
+\item During randomized rounding, we incur expected facility opening cost
 at most
-\[ \beta F^* = \beta \sum_{i \in \mathcal{F}} f_i y_i \]
-\item For non-center clients $j \in \bar D^\alpha$, their expected connection cost
+$\beta F^* = \beta \sum_{i \in \mathcal{F}} f_i y_i$.
+\item For a non-center client $j \in \bar D^\alpha$, its expected assignment cost
 is at most
-\[  \sum_{j \in \bar D^\alpha} (1-\exp(-\beta)) C^*(j) + 3\exp(-\beta)v^\alpha_j = (1-\exp(-\beta)) C^*(\bar D^\alpha) + 3\exp(-\beta)v^\alpha(\bar D^\alpha) \]
+\[  \sum_{j \in \bar D^\alpha} (1-e^{-\beta}) C^*(j) + 3e^{-\beta}v^\alpha_j = (1-e^{-\beta}) C^*(\bar D^\alpha) + 3e^{-\beta}v^\alpha(\bar D^\alpha) \]
 \end{itemize}
-Before we sum up all cost, note that although we obtain $x^*, y^*$ from the original instance,
-they are still feasible LP solution for the instance with scaled facility opening cost.
-The nice thing is that they provided an upper bound on the LP value of scaled instance
-\[  F^*/\alpha + C^*    \]
-
-Now summing up all cost, we get
+Before we sum all of the costs, note that although we obtain $x^*, y^*$ from the original instance,
+they are still a feasible LP solution for the instance with scaled facility opening cost.
+The nice thing is that they provide an upper bound on the LP value of the scaled instance of
+$F^*/\alpha + C^*$,
+where $C^* = \sum_{j \in \mathcal{D}, i \in \mathcal{F}(j)} c_{ij} x^*_{ij}$. Now summing all costs, we get that the total cost is at most
+$\alpha v^\alpha(D^\alpha) + \beta F^* + (1-e^{-\beta}) C^*(\bar D^\alpha) + 3e^{-\beta}v^\alpha(\bar D^\alpha)$.
+Taking $\alpha = 3e^{-\beta}$, this is bounded by
+%\begin{align*}
 \[
-\alpha v^\alpha(D^\alpha) + \beta F^* + (1-\exp(-\beta)) C^*(\bar D) + 3\exp(-\beta)v^\alpha(\bar D)
+%\alpha v^\alpha(\mathcal{D}) + \beta F^* + (1-e^{-\beta}) C^*(\bar D^\alpha) %\\
+%\le 
+\alpha(F^*/\alpha + C^*) + \beta F^* + (1-e^{-\beta}) C^* %\\
+= (1 + \beta) F^* + (1 + 2e^{-\beta}) C^*.
 \]
-Let $\alpha = 3\exp(-\beta)$, we get
-\begin{align*}
-& \alpha v^\alpha(\mathcal{D}) + \beta F^* + (1-\exp(-\beta)) C^*(\bar D) \\
-\le & \alpha(F^*/\alpha + C^*) + \beta F^* + (1-\exp(-\beta)) C^* \\
-= & (1 + \beta) F^* + (1 + 2\exp(-\beta)) C^*
-\end{align*}
+%\end{align*}
 
-By setting $\beta=0.85, \alpha=1.28$, we get $1.85$ as our final approximation constant.
-
-\paragraph{Remark} The reason that we need to scale facility opening cost is that
-we want to obtain an balanced constant for total facility opening cost and
-total connection cost in the analysis.
-This enable us to get better approximation constant compared to the case
-if we don't scale facility opening cost for the primal dual algorithm.
+By setting $\beta=0.85, \alpha=1.28$, we get $1.85$ as the approximation ratio.

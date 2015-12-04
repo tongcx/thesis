@@ -14,17 +14,15 @@
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
-\usepackage{graphicx,pstricks}
-\usepackage{graphics}
-\usepackage{moreverb}
+\usepackage{graphicx}
 \usepackage{subfigure}
-\usepackage{epsfig}
 \usepackage{hangcaption}
 \usepackage{txfonts}
 \usepackage{palatino}
 \usepackage{bm}
 \usepackage{algpseudocode}
 \usepackage{algorithm}
+\usepackage{tikz}
 
 \newtheorem{defn}{Definition}
 \newtheorem{claim}{Claim}
@@ -55,7 +53,7 @@
 \DeclareMathOperator*{\E}{\mathbb{E}}
 \DeclareMathOperator*{\Var}{Var}
 
-\title {Three Problems in OR}
+\title {Some Resource Allocation Problems}
 \author {Chaoxu Tong}
 \conferraldate {January}{2016}
 \degreefield {Ph.D.}
@@ -68,7 +66,11 @@
 \makecopyright
 
 \begin{abstract}
-We include three works of different tastes in this thesis. In the first one, we speed up the approximate linear programming approach for network revenue management problem by solving an equivalent but simpler problem. In the second one, we study variant of facility location problem where clients have specific needs related to their types. The third one is quite pratical, we study how to reduce waiting time in appointment system by real-time resource sharing.
+We include three works on resource allocation in this thesis. Good pricing helps the system to allocate resource efficently. However, the computational efforts to obtain good prices aren't always easy. In airline network revenue setting, high-quality bid prices can be obtained via approximate dynamic programming approach. However, this leads to an expoential-size linear programming which is slow to solve. We show that this hugh linear programming is actually equivalent to a much smaller linear programming with appealing interpretation by exploiting the minimum-cost network flow structure of this problem. Computational experiments indicate that our results can speed up the computation time for the approximate linear programming approach by a factor ranging between 13 and 135.
+
+In the second chapter, we study how to better serve clients by allocating resources to open facilities with right location and type. We extend the classical \textit{facility location} problem by associating \textit{types} with facilities and clients. The types define a partial ordering and a client can only be served by facilities of equal or higher type. We show how to obtain approximation algorithms for two interesting special cases. We also study the problem embedding in time, the lot-sizing variant. We give optimality algorithm for the variant.
+
+In the third chapter, we study allocating medical resource in imaging facilities. The most common method to allocate imaging machine time is by appointment system. However, despite the best efforts by medical staff, the inherent randomness and unexpected disruptions can bring considerate congestion to the system. In the multi-site setting, we seek to complement appointment scheduling with real-time resource sharing. By monitoring system status and making prediction into future, we can identify potential congestion and divert patients accordingly. We provide simulation results showing this method improves patient waiting time and facilities overtime, which are two important quality measurement.
 \end{abstract}
 
 \begin{biosketch}
@@ -80,7 +82,7 @@ To my parents and my wife.
 \end{dedication}
 
 \begin{acknowledgements}
-A big thanks to David for being such a kind and patient advisor. Also thank the passing time for giving me refreshed understanding of myself.
+A big thanks to David for being such a kind and patient advisor. Thanks all friends I met here at Ithaca for sharing precious time with me. Also thank the passing time for giving me refreshed understanding of myself.
 \end{acknowledgements}
 
 \contentspage
@@ -90,12 +92,12 @@ A big thanks to David for being such a kind and patient advisor. Also thank the 
 \normalspacing \setcounter{page}{1} \pagenumbering{arabic}
 \pagestyle{cornell} \addtolength{\parskip}{0.5\baselineskip}
 
-\input{approximate_lp_rm/approximate_lp_rm}
-\input{chap2/main}
-\input{chap3/main}
+\input{chap1/approximate_lp_rm}
+\input{chap2/paper}
+%\input{chap3/main}
 %\input{logit_mixture/logit_mixture}
 %\input{other/main}
 
-\bibliography{sampleThesis,chap2/myrefs,chap3/ref}
+\bibliography{chap1/ref,chap2/myrefs,chap3/ref}
 
 \end{document}

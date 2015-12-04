@@ -1,26 +1,60 @@
 \section{Introduction}
 
-In the classical facility location problem, there is a set of clients and a set of potential facilities. We need to open a subset of facilities and connect each client to a open facility. Opening a facility will incur facility opening cost. Connect a client to open facility will incur connection cost, which is the distance between them. The goal is to minimize the sum of total facility opening cost and total connection cost. It's well known this problem is NP-hard so it's unlikely there is polynomial algorithm that can find optimal solution. As a result, we will focus on approximation algorithm. An $\rho-$approximation algorithm is a polynoimal-time algorithm that delivers a feasbile solution within a factor of $\rho$ of optimum.
+Although algorithm design for the {\it facility location problem} and its many variants has been the focus of a significant body of research, there is an important class of generalizations that has received much attention, but only with more limited success. In the facility location problem, one has a set of demand points and a set of potential facility locations, with specified costs for opening, and the aim is to optimize the choice of open facilities so as to minimize the sum of opening costs and the cost of assigning each demand point to an open facility, where the assignment costs derive from an underlying metric space containing all of the locations. This model places no restrictions on the clients served by each facility, which is typically an unreasonable assumption, and so a great deal of work has been done to address further constrained models. The simplest extension is to impose a capacity constraint, but for a wide range of applications, it is more appropriate to distinguish types of service provided and required, and it is on this class of problems that we shall focus. Facility location models are closely linked to a number of inventory models, since one can view a facility as a point in time at which an order is placed, and the assignment cost then corresponds to the cost of filling a particular demand from that order, where one can have fixed ordering costs, unit ordering costs, and inventory holding costs easily incorporated into this setting. In this chapter, we shall consider both facility location and inventory management problems that arise in the setting with type constraints. 
 
-This problem is a classical one in supply chain and has been extensively studied in the literature. Researchers have applied randomized rounding \cite{shmoys1997approximation, li20131, chudak2003improved}, primal dual \cite{jain2001approximation}, local search\cite{korupolu2000analysis} and greedy algorithm \cite{jain2003greedy} to this problem. Almost all algorithm techniques have been successfully applied to this problem. Currently, the best approximation guarantee 1.488 comes from \cite{li20131} by randomized rounding.
+Since the facility location problem is NP-hard, much of the algorithmic work in this domain has focused on the design of approximation algorithms, and it has proved to be a fertile ground for the development of many of the now-standard techniques in algorithm design:
+researchers have applied deterministic and randomized rounding \cite{shmoys1997approximation,li20131,chudak2003improved}, primal-dual methods \cite{jain2001approximation}, local search\cite{korupolu2000analysis}, and even greedy-type algorithms \cite{jain2003greedy} to this problem. For the classical facility location problem, the best approximation guarantee currently known is a 1.488-approximation algorithm (where a {\it $\rho$-approximation algorithm} is a polynomial-time algorithm that is guaranteed to find a feasible solution of objective function value within a factor of $\rho$ of the optimum), which was obtained by randomized rounding \cite{li20131}.
+For the {\it $k$-median problem}, in which there are no facility costs but one is limited to opening only $k$ facilities, strong results are known via a range of techniques as well \cite{li2013approximating,jain2001approximation,arya2004local}, and analogous results (though more limited) are known for the capacitated version of the facility location problem \cite{chudak2005improved,an2014lp,pal2001facility,bansal20125}. One particularly notable open problem is to derive good algorithms for the setting in which the opening/ordering costs are submodular set functions of the set of demand points assigned (or for suitably general special cases).
 
-Despite all the beautiful results on the vanilla version of the problem, it doesn't capture some practical aspects arising in real problem. Some researchers \cite{li2013approximating,jain2001approximation,arya2004local} investigated the variant that there is no facility opening cost, but only $k$ facilities can be open. In the capacitated version of this problem \cite{chudak2005improved,an2014lp,pal2001facility,bansal20125}, each facility has capacity on number of clients they can serve.
-
-In general, the facility opening cost may depend on what clients are served. It's natural that to serve more diverse clients, the facility needs more serving capability. In \cite{mahdian2003universal}, facility cost can depends on the number of clients served in a more general way. \cite{svitkina2006facility} proposed that facility opening cost can be modeled as a submodular function on set of clients served, however, it's unknown whether a constant approximation algorithm exists even for the case when all facilities have the same cost function.
-
-Our work is in line with the above results that different facility may have different serving capability. In the general case, for each client, we can specify the set of facilities that can serve it. However, this problem would be very hard. It's easy to reduce Set Cover Problem to it. We can have one facility for each set and one client for each element and the set inclusion relationship can be used to encode which facility can be used to serve which client. We can put all facilities and clients at the same location so there is no connection cost. Each facility has unit opening cost. We can see that this problem is exactly equivalent to the Set Cover problem.
-
-\begin{thm}
-If there is arbitrary compatibility relationship between facilities and clients, then the extended facility location problem is Set-Cover hard. And there is no constant approximation for this problem \cite{DBLP:journals/corr/abs-1305-1979}.
-\end{thm}
-
-Instead, we look at more tractable cases where each facility and client is assigned a type. There is some partial ordering among types so that a client can be served with open facility of equal or higher types. The structure of this partial ordering will determine the nature of our problems. We consider two problems.
+The research presented here aims to derive results in which each facility may have a
+different serving capability. In the most general case along these lines, for each client,
+we can specify the set of facilities that can serve it. However, it is easy to reduce the
+set cover problem to it in an approximation-preserving manner (see appendix); thus, approximation
+hardness results known for the set cover problem would apply (and hence no sub-logarithmic
+guarantee is possible unless P=NP). Hence, the issue is to model sufficiently robust
+classes of problems that capture interesting application settings, and yet by-pass this
+hardness result.  We consider the following classes of problems, in which  each facility
+and client is assigned a type, and there is a specified partial ordering among types so
+that a client must be served by any open facility of equal or higher type.  
+The structure of the partial ordering will determine the nature of our problems. 
+With a general partial order, one can again reduce set cover to the problem; we consider
+two structured variants to bypass this. 
 
 \begin{itemize}
-\item \textbf{Facility Location with Hierarchical Types} In this problem, all types form a tree where the root is on top. The partial ordering is defined such that a type is lower than all its ancestors in the tree where the root is the highest type.
+\item \textbf{Facility Location with Hierarchical Types.} In this problem, the types form a rooted tree in which a facility of a given type can serve any client that has a type that is a descendant of the facility type in the tree (where a node is trivially a descendant of itself).
 
-\item \textbf{Pepsi-Coke Facility Location} In this problem, there are only two types of facilities: Pepsi facilities and Coke facilities. There are three types of clients: Pepsi clients, Coke clients and Any-will-do clients. As the names suggest, Any-will-do clients can be served by any facility but the other clients can only be served by facilities of the same type. The partial ordering here is a V shape where no facilities is of the bottom type.
+\item \textbf{Pepsi-Coke Facility Location.} In this problem, there are only two types of facilities: Pepsi facilities and Coke facilities. There are three types of clients: Pepsi clients, Coke clients and Anything-will-do clients. As the names suggest, Anything-will-do clients can be served by any facility, but the other clients can only be served by facilities of the same type. The partial ordering here is a ``V-shape,'' where there are no facilities of the bottom type.
 
 \end{itemize}
 
-We give constant approximation algorithms for each problems. For Facility Location with Hierarchical Types, we should how to extend classical primal dual algorithm to obtain Lagrange Multiplier Preserving algorithm. Then we show how to derive better approximation guarantee by combining primal dual algorithm with other techniques. For Pepsi-Coke Facility Location, we use randomized rounding based on rounding fractional solution of matroid intersection problem.
+A model somewhat weaker than the former setting was considered by Barman and
+Chawla~\cite{DBLP:journals/corr/abs-1110-4150}, who introduced a problem called the {\it
+  redundancy-aware facility location problem}, where each client needs a set of services
+and all of these services need to be installed at the same facility location in order to
+serve that client; they gave an LP rounding algorithm with approximation guarantee of 27
+for the case that all clients' demanded service sets are laminar. The facility location
+problem with hierarchical types is the generalization of their problem if we group
+services belong to the same service set to a single facility. We include more details on the relationship in appendix. In contrast, the first main
+result of this chapter is a simple primal-dual 3-approximation algorithm for the facility
+location problem with hierarchical types. We show how to add a simple prioritization rule
+to the pruning phase of the algorithm of Jain and Vazirani \cite{jain2001approximation}
+leads to this result. Furthermore, the analysis gives a stronger result; we show that it
+is a Lagrangian-multiplier-preserving algorithm, in that not only is the sum of the
+assignment and facility costs at most three times the optimum, but the sum of the
+assignment and 3 times the facility cost is at most 3 times the optimal cost. We are
+unable to convert this to an analogous $k$-median result, but we can augment this analysis with a rescaling technique \mbox{to obtain a 1.85-approximation algorithm.}
+
+For the Pepsi-Coke facility location problem, we add a new dimension to the by-now standard LP rounding-by-clustering techniques that arises due to the fact that when choosing a cluster for one of the Anything-will-do clients $j$, a facility used by the LP solution for that client, cannot necessarily serve all of the clients served by any facility fractionally serving $j$. We overcome this difficulty by separately performing two clustering constructions,  but then couple the outcomes by relying on an auxiliary matroid intersection computation, where a feasible fractional solution to the matroid intersection instance is derived from the original fractional solution (in a manner similar to a technique used by Swamy \cite{swamy2013improved}). Consequently, we obtain a 3-approximation algorithm for the Pepsi-Coke facility location problem.
+
+Analogous to the development of approximation algorithms for facility location problems,
+there has been a corresponding thread of research investigating results of a variety of
+inventory management problems, primarily the {\it lot-sizing} and the {\it joint
+  replenishment
+  problem}\cite{levi2008approximation,levi2008constant,levi2006primal,ApproxjrpD:Beinkowski,cheung2014submodular}. In
+some elements, these problems are sometimes simpler than their facility location
+equivalents, since the assignment costs, in addition to obeying the triangle inequality,
+often have an even more refined structure due to the linear nature of ordering/demand time
+periods. However, these problems have a harder element, since the metric is definitely not
+symmetric - one cannot serve a demand point earlier in time than the ordering
+period. Hence, it is natural to ask for the analogs of the two results discussed above. Surprisingly, for the lot-sizing problem with hierarchical types, we show that the problem can be solved dynamic programming in polynomial time, in a manner exactly analogous to a recent result \cite{cheung2014submodular}. However, unlike for the unconstrained lot-sizing problem, for which the natural linear programming relaxation is the basis for a primal-dual polynomial-time algorithm as well \cite{levi2006primal},
+we give an example for which there is an integrality gap of 4/3 for the lot-sizing problem with hierarchical types.
