@@ -13,7 +13,7 @@ Appointments are the central entities in the system. We will track several state
 \item Site. This is the site the patient is supposed to go to. We assume patients will go to the site that they're assigned to. If the patient accepts a diversion, then his/her site will change accordingly.
 \item Scan type. This is type of scan will be performed on patients. This is determined by the patient's diagnosis need and is decided when the call center schedule for the appointment. Practitioners have working knowledge on estimating duration of scans based on its type. Sometimes, they can have a pretty good estimate on how much congestion may occur based on the schedule and all scan types of that day.
 \item Machine used. If patient is under scan, then we will track which machine is used.
-\item Arrival time, begin time and finish time. We will track progress of appointments. These statistics can help us to figure out what contributes to problems occurred in the system. Whether it's patients arrive too late or scans take too long. In addition, we can make prediction on future based on statistics we collected.
+\item Arrival time, time when patient finishes preparation before scan, begin time and finish time. We will track progress of appointments. These statistics can help us to figure out what contributes to problems occurred in the system. Whether it's patients arrive too late or scans take too long. In addition, we can make prediction on future based on statistics we collected.
 \end{itemize}
 
 \paragraph{Time} Of course, we also need to keep track of current time.

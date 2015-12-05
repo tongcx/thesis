@@ -5,6 +5,6 @@ We use simulation to investigate dynamics of the system and evaluate the system 
 You have already seen in this section that the whole system can be modeled as discrete event system where entities interact with each other through events. We do use discrete event simulation here. However, to be able to do so, we need to have some information about the system in reality so that we can model it in simulation. Fortunately, we have access to data collected by hospital on historical scans done for 3 years. This enables us to conduct simulation in realistic scenarios.
 
 \paragraph{Schedule} We look at the historical schedules and their patterns. We construct schedule accordingly. We know which scans are popular and their proportion among all scans. We also know the slot size allocated for each type of scan.
-\paragraph{Uncertainty} Both when patients come and how long their scans take are uncertain. We collect distributions on these information and use them in simulation. Note here we will estimate scan duration for each type of scans.
+\paragraph{Uncertainty} Both when patients come and how long their scans take are uncertain. We collect distributions on these information and sample from these distributions in simulation. Note here we will estimate scan duration for each type of scans.
 \paragraph{Unexpected events} From historical data, we can estimate the rate of Same Day Add-on patients and cancellation. We use these rate to randomly generate these unexpected events in simulation.
 
