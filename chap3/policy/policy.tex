@@ -1,11 +1,7 @@
-\subsection{Policy}
+\section{Policy}
 
-It's a nice idea to let sites help each. But we still need to figure out which diversion to do and how to evaluate the impact of these diversions. It is not a simple problem. It seems as simple as to just divert anyone from congested site to non-congested site. But the reality is more complicated than that. The system is stochastic and we cannot say for sure whether diversion is definitely better. We need to cope with risk. Also, congestion is temporal concept, some site is non-congested in the morning doesn't mean it will stay so in the afternoon, especially if its afternoon schedule is very tight.  Overall, this is a non-trivial problem and there are several things
-we need to closely look after.
+To carry out our idea of resource sharing, we need to figure out among all volunteers, who should we divert and where should we divert them to? It's not as simple as it sounds to just divert patients from congested site to non-congested site. Congestion is a temporal concept: a site is congested in morning doesn't mean it is so in afternoon. We need to define some objective measuring desirability of outcome and, then, we can identify diversions that can improve this objective. Another issue is that because of uncertainties, we don't have a clear-cut answer on whehter a diversion is beneficial or not. It may help or it may hurt. We need make a choice in face of stochastic outcome. Overall, we need to evaluate the impact of diversions with respect to some objective in stochastic setting.
 
-In this subsection, we will discuss what metrics we're looking for and how do we make sure our diversion will improve these metric with high chance.
-
-\input{chap3/policy-metric}
-\input{chap3/policy-prediction}
-\input{chap3/policy-valid}
-\input{chap3/policy-decision}
+\input{chap3/policy/metric}
+\input{chap3/policy/outcome}
+\input{chap3/policy/decision}

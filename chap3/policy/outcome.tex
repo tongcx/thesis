@@ -1,0 +1,20 @@
+\subsection{Dealing with stochastic outcome}
+
+At some time of the day, when considering a diversion, we can think about the outcome $\delta, \delta'$ for carrying out the diversion or not. The issue is that both $\delta, \delta'$ are stochastic and we don't know them for sure. Thus, what's the critierion when we say a diversion is good? We decide to consider the probability of improvement. We will say a diversion is \textit{valid} if
+\begin{align*}
+  \mathbb{P}[C(\delta') < C(\delta)] \ge \theta_c   \\
+  \mathbb{P}[P(\delta') < P(\delta)] \ge \theta_p
+\end{align*}
+where $\theta_c, \theta_p$ are two treshold controlling how aggressive/conservative we are. High threshold ensures we will see improvement for sure, but there may only be very few diversion options.
+
+In other words, the critierion we have is that we want that the overall objective improve with high probability and the patient being diverted experience less waiting time with high probability.
+
+Still we don't know outcomes $\delta, \delta'$, so we can use simulation to sample from the outcome distribution. We just need to find a way to sample all information we don't know yet. Here is the list of information we need and how to sample them.
+
+\begin{itemize}
+\item For patients who are under scan, how much more time do they need to finish their scans? We can use historical scan duration distribution and sample from it conditioning on that the scan time is longer than how much time the patient has been under scan.
+\item For patients who haven't shown up, when will they show up? Again, we can sample from historical distribution conditioning on the patient hasn't shown up yet.
+\item For patients in waiting room or patients who haven't shown up yet, how long will their scans take? We can simply sample from historical scan distribution.
+\end{itemize}
+
+Suppose in total generate $k$ sample paths and let $\xi_1, \ldots, \xi_k$ be all the random vectors (all processing time, arrival time, etc information) sampled. Then we can use simulation tool to generate outcomes $\delta(\xi_1), \ldots, \delta(\xi_k)$ for the scenario without current diversion and outcomes $\delta'(\xi_1), \ldots, \delta'(\xi_k)$ for the scenario with current diversion. Now we can compare them by counting for how many $\xi_i$'s that $C(\delta'(\xi_i)) < C(\delta'(\xi_i))$. Here notices we are comparing pair of outcomes using the same random vector. This technique is called \textit{common random numbers}, and this can help us reduce variance. In the end we can use the fraction of pairs where objective improves to approximate the probability that diversion leads to better objective. We use this fraction to compare with the threshold $\theta_c$. We can do the same for waiting time of diverted patient. In this case, we can use simulation to determine which diversions are \textit{approximately valid}. And we will try to carry out these diversions.

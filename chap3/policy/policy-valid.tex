@@ -1,7 +1,0 @@
-\subsubsection{Valid diversion}
-
-Given the simulation results, we want to decide whether a diversion is good or not. Notice here we a prior prefer not to divert the patient. The reason is that diversion still will bring some inconvenience to patients and hospital people need to make phone calls to communicate with patients. Thus, we want to make sure that our diversion will bring significant improvement.
-
-Let's set two threshold on fractions $p_P, p_C$. Remember due to common random numbers, we have coupled the outcomes $\delta_k, \delta'_k$. Now we can compare these outcomes in couple. For each $\delta_k, \delta'_k$ we check whether $C(\delta_k) > C(\delta'_k)$. If over all couples, it happens with fraction bigger than $p_C$, then we say that with high probability the overall cost improve with diversion. We will also do the same to test whether $P(\delta_k) > P(\delta'_k)$. If this happens with fraction higher than $p_P$, then we say that with high probability, the diverted patient waits less.
-
-If a diversion satisfy both criterion, then we say this is a valid diversion. The intuition is that valid diversion can improve overall cost and diverted patient's waiting time in most cases.
