@@ -1,52 +1,44 @@
 \subsection{7 Sites Results}
 
-We'd like to isolate out the impact of simply resource pooling. Thus
+The 3 sites cases, although is based on reality, already contains
+some pooling effect initially due to some site has more than one
+machines. We'd like to isolate out the impact of just diversions. Thus
 it makes sense to conduct experiment on the case where instead of
 having some big sites and small sites, we have 7 small sites, each
 with one machine. This system has worse performance to begin with
 because no pooling effect is present initially. Let's look at the
-impact of diversions.
+impact of diversions. Note all sites are totally homogeneous now:
+they have same number of machines, same amount of load and
+same open time. As a result, we don't need to look at system
+performance at per site level.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.9\textwidth]{chap3/numeric/pic/7sites_extreme}
-\caption{The impact on extreme waiting by diversions. Compare to
-3 sites case, we much more significant improvement.}
-\label{fig:7sites_extreme}
+\includegraphics[width=.96\textwidth]{chap3/numeric/pic/7sites_all}
+\caption{The impact of diversions on system performance of a system
+with 7 sites, each with one machine.}
+\label{fig:7sites_all}
 \end{figure}
+
+Figure \ref{fig:7sites_all} shows that compared to 3 sites case,
+diversions have more impact on this system. This time, we have
+significant improvement even on mean waiting time. This is exactly
+because diversions bring pooling effect which is intially not
+presented.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.9\textwidth]{chap3/numeric/pic/7sites_wait_overtime}
-\caption{The impact on mean waiting time and overtime by diversions.}
-\label{fig:7sites_wait_overtime}
+\includegraphics[width=.6\textwidth]{chap3/numeric/pic/7sites_all_diversion}
+\caption{Fraction of diverted patients in 7 sites case.}
+\label{fig:7sites_all_diversion}
 \end{figure}
 
-Figure \ref{fig:7sites_extreme} shows that we have more significant
-improvement compared to 3 sites case. This confirmed our intuition
-that bigger improvement can be achieved with no pooling effect to begin with.
-Figure \ref{fig:7sites_wait_overcome} tells the same story for mean
-waiting time and overtime. Note in the end, we can improve mean waiting
-time from 38min to 30min, with a 8min difference. And the story is
-similar for overtime.
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=.9\textwidth]{chap3/numeric/pic/7sites_diversion_gain}
-\caption{The fraction of diversions and waiting time reduction from diversions.}
-\label{fig:7sites_diversion_gain}
-\end{figure}
-
-From Figure \ref{fig:7sites_diversion_gain}, we see that we diverted a lot
-more patients compared to 3 sites case. With all patients as volunteer, we
-diverted more than 6\% of them. This shows that there are a lot more
-beneficial diversion opportunities when there is no initially. Also, for
+From Figure \ref{fig:7sites_all_diversion}, we see that we may potentially
+divert 6\% patients if everyone is volunteer. This is a lot more compared
+with 3 sites case. This shows that there are a lot more
+beneficial diversion opportunities when there is no pooling initially. Also, for
 diverted patients, each of them also enjoys more waiting time reduction
 compared to 3 sites case.
-
-Note that here all 7 sites are totally homogeneous so there won't be any
-unbalance in term of diversion flow and all improvement is equally achieved
-by all sites.
 
 Overall, the experiments for the 7 site confirms that greater benefit can
 be achieved in the system with many small sites.

@@ -4,10 +4,10 @@ Suppose that we are considering some diversion. Without this diversion, the outc
 
 \paragraph{Waiting time} For sure, we will desire the outcome with less patient waiting time. However, there are many patients. What do we say when one patient is waiting less but the other is waiting more? Let $W(\delta)$ be the vector of waiting time for outcome $\delta$ and define $W(\delta')$ accordingly. Since we are more concerned with the extreme waiting time case, we can use $l2$-norm of $W(\delta), W(\delta')$ to measure how we're doing on waiting time. This will penalize extreme waiting time more. Note that if a patient is ready before his/her appointment, we don't count that waiting.
 
-\paragraph{Overtime} Each site has open time. If the site has to continue operating outside open site, then overtime is incurred. It's usually because there are patients still need processing even after the close time of the site. We like outcome with low overtime. Let $O(\delta), O(\delta')$ be the total overtime over all sites for either outcome. We will put this into our objective. Besides this is a important metric for outcome quality, this also help us to cope with different open time of sites. Suppose one site close at 8pm and another close at 10pm. Then at 9pm, the first site seems pretty empty so we may tempt to divert patient to there. The fact that this will incur a lot of overtime for the first site will prevent us from doing so. Thus, we don't send patient to site that is supposed to be close at that time.
+\paragraph{Overtime} Each site has open time. If the site has to continue operating outside open site, then overtime is incurred. It's usually because there are patients still need processing even after the close time of the site. We like outcome with low overtime. Let $O(\delta), O(\delta')$ be the vector of overtimes (one per machine) over all sites for either outcome. We will put this into our objective. Besides this is a important metric for outcome quality, this also help us to cope with different open time of sites. Suppose one site close at 8pm and another close at 10pm. Then at 9pm, the first site seems pretty empty so we may tempt to divert patient to there. The fact that this will incur a lot of overtime for the first site will prevent us from doing so. Thus, we don't send patient to site that is supposed to be close at that time.
 
 \paragraph{Objective} We can combine $W(\delta), O(\delta)$ into one objective by defining the cost
-\[  C(\delta) = \sqrt{n}||W(\delta)||_2 + \lambda O(\delta) \]
+\[  C(\delta) = ||W(\delta)||_2 + \lambda ||O(\delta)||_2 \]
 Where $n$ is number of patients and $\lambda$ is a parameter controlling
 how much weight should we put on overtime when we need to trade off
 between patient waiting time and sites overtime.
@@ -16,4 +16,6 @@ By optimizing over this objective, we will favor outcome with low waiting time a
 
 \paragraph{Waiting time of diverted patient} As we mentioned is last section, we'd like the diverted patient to experience less waiting time for incentive reason. Let $P(\delta), P(\delta')$ be the waiting time of the diverted patient in each outcome.
 
-Overall, a desirable diversion should have two properties. First, we want $P(\delta) > P(\delta')$. In order words, we want the diverted patient to wait less compared to if he/she sticks to the original assigned site. Second, let we want $C(\delta) > C(\delta')$, so system performance is better with diversion.
+Overall, a desirable diversion should have two properties. First, we want $P(\delta) > P(\delta')$.
+In order words, we want the diverted patient to wait less compared to if he/she sticks to the original
+assigned site. Second, let we want $C(\delta) > C(\delta')$, so system performance is better with diversion.

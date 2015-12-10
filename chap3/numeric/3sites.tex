@@ -1,118 +1,116 @@
 \subsection{3 Sites Results}
 
-We will look at several metrics: waiting time, overtime and number
-of diverted volunteers. The reason why we want to look at number of
-diverted volunteers is that diversion involves communication and
-coordination with patients, so we'd like to achieve improvement
-without too much change.
+Let's first take a look at the impact of diversions with 60min
+lead time. Figure \ref{fig:3sites_extreme} shows how extreme
+waiting cases are reduced. First thing to notice is that
+different sites start out differently. This is caused by
+different number of machines they have. York Ave has 4 machines,
+so it already enjoys a lot of pooling effect. That's why patients
+generally wait less there. However, as we can see in Figure \ref{fig:3sites_extreme},
+diversions reduce extreme waiting cases for all sites, most
+prominently at sites with fewer machines.
+
+Since we're optimizing $l2$-norm of waiting time vector.
+It's understandable that we can reduce extreme waiting time,
+potentially by propping up waiting time for other patients.
+So it's interesting to look at how we're doing on mean waiting
+time.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.9\textwidth]{chap3/numeric/pic/3sites_extreme}
-\caption{The impact on extreme waiting by diversions. As we increase
-fraction of volunteers, we have more flexibility to divert patients,
-and we see the extreme waiting cases drop.}
+\includegraphics[width=.95\textwidth]{chap3/numeric/pic/3sites_extreme}
+\caption{The impact on extreme waiting by diversions.}
 \label{fig:3sites_extreme}
 \end{figure}
 
-Figure \ref{fig:3sites_extreme} show how diversion affects extreme waiting times. Without
-diversion, about 13.5\% patients wait more than 60min and about
-5\% patients wait more than 90min. When we have 40\% patients
-as volunteers and 60min lead time, only 10\% patients wait more
-than 60min and 2\% patients wait more than 90min.
+Figure \ref{fig:3sites_wait_over} shows that we actually
+reduced mean waiting time for all sites and the reduction
+for 84th St and 55th St is again quite significant.
+Not only that, we also reduced mean overtime for all sites, so
+the staff can go home earlier. This means that we can finish
+the same amount of work within shorter amount of working time.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.9\textwidth]{chap3/numeric/pic/3sites_wait_overtime}
-\caption{The impact of diversions on mean waiting time and
-sites overtime. There is mild improvement on both metric.}
-\label{fig:3sites_wait_overtime}
+\includegraphics[width=.95\textwidth]{chap3/numeric/pic/3sites_wait_over}
+\caption{The impact on mean waiting times and mean site overtimes by diversions.}
+\label{fig:3sites_wait_over}
 \end{figure}
 
-Figure \ref{fig:3sites_wait_overtime} shows
-that we also have mild improvement over mean waiting time of all
-patients. Figure \ref{fig:3sites_wait_overtime} shows that with diversion, we also reduce
-mean overtime over all sites.
+The explanation comes from Figure \ref{fig:3sites_idle}. By
+diverting patients to non-congested site, we actually reduce
+idle time there. Because we have make use of some machine time that
+would be otherwise wasted in idling, we can finish more work
+in same amount of time, resulting in less backlog and congestion.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.6\textwidth]{chap3/numeric/pic/3sites_diversion}
-\caption{The fraction of patients diverted over all patients.
-Only very small fraction of patients are diverted even with
-all patients as volunteers.}
-\label{fig:3sites_diversion}
+\includegraphics[width=.6\textwidth]{chap3/numeric/pic/3sites_idle}
+\caption{The impact on mean idle times.}
+\label{fig:3sites_idle}
 \end{figure}
 
-All of these are achieved with diverting
-only at most 3\% of all patients as shown in Figure \ref{fig:3sites_diversion}.
+Figure \ref{fig:3sites_gain_flow} shows that the most diversions are
+into York Ave and patients who are diverted to York Ave enjoys the
+most reduction in waiting time. This is quite intuitive that
+the pooling effect at York Ave gives it more processing capability.
+So it has more slack to take in more patients than the other two
+sites can. No matter which site the patient is diverted to,
+he/she always enjoys significant reduction in waiting time, this
+should serve as great incentive for them to cooperate if they
+have the flexbility to.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.6\textwidth]{chap3/numeric/pic/3sites_gain}
-\caption{Average waiting time reduced for diverted patients.
-With more volunteers, the average gain decreases, but it's
-still more than 25min with 100\% volunteers.}
-\label{fig:3sites_gain}
+\includegraphics[width=.95\textwidth]{chap3/numeric/pic/3sites_gain_flow}
+\caption{The amount of diversion into each site and reduction of waiting time
+enjoyed being diverted into each site.}
+\label{fig:3sites_gain_flow}
 \end{figure}
 
-Figure \ref{fig:3sites_gain} shows how much waiting
-time do the diverted patients save on average. Although it decreases
-when we have more volunteers, but still there on average a diverted
-patient is expected to wait at least 25min less, which is good incentive
-for them to accept diversions. Another thing we can see is that
-when we use 90min lead time, we can still achieve most benefits with
-60min lead time. This shows that our approach is robust with longer
-lead time.
+Overall, we can see across all the figures, that the system performance
+improves fastest when we only have very little fraction of patients as
+volunteers. In other words, diversions can rapidly improve system
+performance with very little flexbility. This is desirable since
+benefits seen in limited trial can give practioner more confidence
+to implement this in more full scope.
+
+Figure \ref{fig:3sites_all} shows the overall system performance for both 60min lead time
+and 90min lead time case. It reiterates the discussion above. Overall,
+with 60min lead time and 40\% volunteers, we bring down the fraction
+of over 60min cases from 13.5\% to 9.7\%, and the fraction of
+over 90min cases from 4.7\% to 1.8\%. Both overtime and idle time
+are significantly improved.
+
+However, we would like to stress that even with 90min lead time, the diversions
+still bring much improvement, not too much different from
+the performance with 60min lead time. This has quite important practical
+implication since longer lead time makes it easier for patients to be
+diverted to different sites.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.9\textwidth]{chap3/numeric/pic/3sites_site_wait}
-\caption{Impact of diversions on waiting time for each site. It will
-greatly improve situations at 55th St and West 84 St, but it will hurt
-York Ave a little bit.}
-\label{fig:3sites_site_wait}
+\includegraphics[width=.95\textwidth]{chap3/numeric/pic/3sites_all}
+\caption{System performance improvement by diversion.}
+\label{fig:3sites_all}
 \end{figure}
+
+We also want to note that, as Figure \ref{fig:3sites_all_diversion} shows,
+we only diverted very small fraction of patients. Even if all patients
+are volunteers, we only diverted less than 3\% of them.
+We think this is a desirable property since less changes are easier
+to implement. Also since there are only 3 changes per day on average,
+the staff can use their domain knowledge to better facilitate those
+changes.
 
 \begin{figure}[htp]
 \centering
-\includegraphics[width=.6\textwidth]{chap3/numeric/pic/3sites_site_overtime}
-\caption{Impact of diversions on overtime for each site. Again it will hurt
-York Ave a bit, but improves things at 55th St and West 84 St.}
-\label{fig:3sites_site_overtime}
+\includegraphics[width=.6\textwidth]{chap3/numeric/pic/3sites_all_diversion}
+\caption{Fraction of patients diverted.}
+\label{fig:3sites_all_diversion}
 \end{figure}
 
-It's also interesting to zoom in and look at what happens at site-level.
-Figure \ref{fig:3sites_site_wait} shows the waiting time change per site. Here we see that
-although the waiting time for 55th St and West 84th St improves a lot,
-it becomes slightly worse. The same is true for overtime, as showed in
-Figure \ref{fig:3sites_site_overtime}.
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=.6\textwidth]{chap3/numeric/pic/3sites_site_inflow}
-\caption{Fraction of patients diverted into each site. With four machines,
-York Ave becomes the most popular destination and this explains why its
-performance got hurt a bit.}
-\label{fig:3sites_site_inflow}
-\end{figure}
-
-It becomes clear why when we look at Figure
-\ref{fig:3sites_site_inflow}. It shows that among all diversions, most are inflow to York Ave.
-The reason is that York Ave has 4 machines, so it already gets quite a
-bit pooling and thus we're more likely to divert patients there.
-However, as we see earlier, the overall performance of the whole
-system still improves.
-
-We also did experiment without disruptions like SDAOP or cancellation.
-In this case, the system loads are lighter and the system is already
-working quite well without diversion. But still, diversions can
-produce some small improvement. See Figure \ref{fig:3sites_without_sdaop}.
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=.9\textwidth]{chap3/numeric/pic/3sites_without_sdaop}
-\caption{System performance when there is no SDAOP and cancellation.
-In this case, the system load is light and there isn't much congestion
-to begin with. However, diversions can still achieve some small improvement.}
-\label{fig:3sites_without_sdaop}
-\end{figure}
+Overall, we think diversions are shown to be a efficient way to
+improve system performance for NYP's outpatient MRI sites.
+It can significantly improve on patient waiting time, sites overtime
+without incurring too many diversions.
