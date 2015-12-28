@@ -1,18 +1,17 @@
-\section{Some theoretical results}
+\section{Continuity with respect to lead time}
 
 In the experiment, we considered two lead times. It's an interesting question
 to ask whether the system's performance change continuously with respect to
-lead time. Here we first give a proof on a simple setting and then discuss
+lead time. Here we first give a proof sketch on a simple setting and then discuss
 where is the difficulty to extend it to our more realistic setting.
 
-Consider the following setting. There are several sites, each with one machine.
-There are $n$ patients with appointment and they will arrive punctually
-according to their appointment times. Each patient has an exponentially
-distributed service distribution, potentially having different mean.
+Consider the following setting. There are $k$ sites, each with one machine.
+There are $n$ patients. Patient $i$ has appointment time $a_i$
+and the patients will arrive punctually according to their appointment times.
+Each patient has an exponentially distributed service distribution $d_i \tilde Exp(\mu_i)$.
 Let the lead time be $l$. Every patient is volunteer and we use a
-join-shortest-queue policy: $l$ time before the appointment of some patient,
-we will look at in expectation which site will finish its current load
-earliest and then put the patient there.
+join-shortest-queue policy: $l$ time before the $a_i$, we will check which site
+will finish its current load earliest in expectation and then put the patient $i$ there.
 
 We will prove that the expected total waiting time is continuous with
 respect to lead time $l$.
@@ -23,5 +22,58 @@ service durations). Let $X(l)$ be the random total waiting time when we
 use lead time $l$. Here the randomness come from the randomness of service
 durations. We want to prove that $E[X(l)]$ is continuous w.r.t. $l$.
 
-Now consider two lead times $l$ and $l+\epsilon$.
+Let $W_i(l)$ is the random waiting time for patient $i$ when lead
+time is $l$. Since $X(l)$ is just sum of $W_i(l)$, we only need to prove
+$E[W_i(l)]$ is continuous w.r.t. $l$.
+
+Now consider two lead times $l$ and $l+\epsilon$ ($\epsilon > 0$).
+For any patient $i$ with appointment time $a_p$, we consider the
+time window $[a_i - l - \epsilon, a_i - l]$. We call all these
+windows \textit{critical windows}. Let $A_i$ be the event that
+there are no patients got finished during \textit{critical window} of patient $i$.
+Let $A = \cup_i A_i$ and suppose none of $A_i$ happens.
+Consider the moments when we make decision for patient $i$ in two systems
+at time $a_i-l$ and $a_i - l - \epsilon$. We can inductively argue
+that the two systems see exactly the same set of unfinished patients
+(including in-progress and waiting patients and patients who are already
+assigned but haven't arrived yet) at each site. Because exponential
+distribution is memory-less, the two system will calculate exactly
+the same expected finish time for each site, and thus, assign patient $i$
+to the same site. This shows that the end result will be the same
+if there is no patient completion in \textit{critical windows}.
+
+Let $\mu_{max}$ be the largest $\mu_i$. We can bound the probability
+of $A_i$ by,
+\[  k \mu_{max} \epsilon  \]
+since there are at most $k$ patients being processed in parallel at any time
+and the maximum rate of patient completion is $\mu_{max}$. By union bound,
+we can bound the probability of $A$ by $n k \mu_{max} \epsilon$.
+
+Now, we can prove $E[W_i(l)]$ is right-continuous
+\begin{align*}
+E[W_i(l+\epsilon)] - E[W_i(l)] &= E[(W_i(l+\epsilon) - W_i(l))I(A)] +
+    E[(W_i(l+\epsilon) - W_i(l))(1 - I(A))] \\
+ &= E[(W_i(l+\epsilon) - W_i(l))I(A)] \\
+ &\le E[(|W_i(l+\epsilon)| + |W_i(l)|)I(A)]
+\end{align*}
+Ordering all patients by their appointment time, we can bound the
+waiting time of patient $i$ by the sum of processing time of all
+patients before him/her.
+\[ W_i \le \sum_{j=1}^{i-1} d_j \]
+This is true for any lead time. So
+\[  E[W_i(l+\epsilon)] - E[W_i(l)] \le E[2(\sum_{j=1}^{i-1} d_j) I(A)] \le 2(i-1)\mu_{max} P[A]  \]
+When $\epsilon \rightarrow 0^+$, we see that $P[A] \rightarrow 0$ and
+thus $E[W_i(l)]$ is right continuous w.r.t. $l$. With similar argument,
+we can show it's also left-continuous. This conclude our proof that
+$E[X(l)]$ is continuous w.r.t. $l$.
 \end{proof}
+
+We'd like to extend this proof to include the try-and-compare decision
+rule we use. We also want to work with non-expoential service durations.
+However, in any of these cases, we will have the difficulty that even
+if there is no patients completion during \textit{critical windows}.
+The two system may still make different decisions with large probability.
+The system with lead time $l+\epsilon$ basically see that all patients
+have been processed $\epsilon$ more time compare to the system with lead
+time $l$. This sole fact can have impact on site overtime and leads
+to different decision.
