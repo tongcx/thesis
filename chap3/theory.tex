@@ -1,0 +1,27 @@
+\section{Some theoretical results}
+
+In the experiment, we considered two lead times. It's an interesting question
+to ask whether the system's performance change continuously with respect to
+lead time. Here we first give a proof on a simple setting and then discuss
+where is the difficulty to extend it to our more realistic setting.
+
+Consider the following setting. There are several sites, each with one machine.
+There are $n$ patients with appointment and they will arrive punctually
+according to their appointment times. Each patient has an exponentially
+distributed service distribution, potentially having different mean.
+Let the lead time be $l$. Every patient is volunteer and we use a
+join-shortest-queue policy: $l$ time before the appointment of some patient,
+we will look at in expectation which site will finish its current load
+earliest and then put the patient there.
+
+We will prove that the expected total waiting time is continuous with
+respect to lead time $l$.
+
+\begin{proof}
+Fix the schedule (including all patients' appointment times, mean of their
+service durations). Let $X(l)$ be the random total waiting time when we
+use lead time $l$. Here the randomness come from the randomness of service
+durations. We want to prove that $E[X(l)]$ is continuous w.r.t. $l$.
+
+Now consider two lead times $l$ and $l+\epsilon$.
+\end{proof}
