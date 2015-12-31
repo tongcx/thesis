@@ -13,6 +13,15 @@ how much weight should we put on overtime when we need to trade off
 between patient waiting time and sites overtime.
 This will capture both patient waiting time and sites overtime.
 By optimizing over this objective, we will favor outcome with low waiting time and overtime.
+Notice here we choose to optimize $l2$-norm of waiting time vector
+and overtime vector. This choice will favor
+outcomes where no patients experience extreme long waiting time
+and no machines incur extreme long overtime. Thus, it's encouraged
+to use diversions to share loads evenly across sites.
+We also experimented with $l1$-norm for overtime, the problem there
+is that patients can be diverted to the site which closes early
+to reduce waiting time while keep the total overtime the same.
+This disrespects regular open time of sites and is not desirable.
 
 \paragraph{Waiting time of diverted patient} As we mentioned is last section, we'd like the diverted patient to experience less waiting time for incentive reason. Let $P(\delta), P(\delta')$ be the waiting time of the diverted patient in each outcome.
 

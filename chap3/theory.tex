@@ -3,10 +3,28 @@
 In the experiment, we considered two lead times. It's an interesting question
 to ask whether the system's performance change continuously with respect to
 lead time. Here we first give a proof sketch on a simple setting and then discuss
-where is the difficulty to extend it to our more realistic setting.
+where is the difficulty to extend it to more realistic setting.
 
-Consider the following setting. There are $k$ sites, each with one machine.
-There are $n$ patients. Patient $i$ has appointment time $a_i$
+Consider the following setting.
+\begin{itemize}
+\item There are $k$ sites, each with one machine.
+\item There are $n$ patients, numbered $1,\ldots,n$. Patient $i$
+      has appointment time $a_i$ and the appointment times are
+      in non-decreasing order. Patients will arrive punctually
+      according to their appointment times.
+\item The service duration $d_i$ of patient $i$ follows exponential
+      distribution $Exp(\mu_i)$ with mean $\frac{1}{\mu_i}$.
+\end{itemize}
+The system will follow join-shortest-queue policy with lead time $l$.
+Let $P_j$, at any given time, be the set of patients who are assigned
+to site $j$ but hasn't completed their services.
+At time $a_i-l$, we will try to assign patient $i$ (for patients
+with the same appointment time, we will assign patient with lower
+number first). The system will look at each site $j$ and its
+expected total process time
+\[  T_j = \sum_{i' \in P_j} \frac{1}{\mu_{i'}}  \]
+and assign patient $i$ to the site with lowest $T_j$
+
 and the patients will arrive punctually according to their appointment times.
 Each patient has an exponentially distributed service distribution $d_i \tilde Exp(\mu_i)$.
 Let the lead time be $l$. Every patient is volunteer and we use a
@@ -17,9 +35,9 @@ We will prove that the expected total waiting time is continuous with
 respect to lead time $l$.
 
 \begin{proof}
-Fix the schedule (including all patients' appointment times, mean of their
-service durations). Let $X(l)$ be the random total waiting time when we
-use lead time $l$. Here the randomness come from the randomness of service
+Fix the set of patients and their appointments $\{a_i\}$, parameters of their
+service distributions $\{\mu_i\}$. Let $X(l)$ be the random total waiting time when we
+use lead time $l$. The randomness of the system comes from the service
 durations. We want to prove that $E[X(l)]$ is continuous w.r.t. $l$.
 
 Let $W_i(l)$ is the random waiting time for patient $i$ when lead
