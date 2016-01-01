@@ -1,15 +1,80 @@
 \section{Introduction}
 
-Waiting time has been increasingly a problem in health-care industry. In May 2014, the Centers for Disease Control and Prevention reported average emergency department wait times is about 30 minutes. This phenomena is wide-spreading in all health-care industry: doctor office, emergent department, imaging facilities and other medical units all face this problem. Interestingly, most patients are so accustomed to this phenomena that they general expect waiting when visiting a doctor. More broadly, people are becoming more and more aware about the quality of services (waiting time is an important one) they receive. However, it seems hard to improve service quality for lots of cases.
+New York Presbyterian (NYP) hospital operates a big outpatient MRI service
+consists of three nearby sites within Manhattan with 7 machines in total.
+They provide services of hundreds types of scans and they process about 100
+patients per day. However, patients sometimes experience long waiting time
+(about 20\% patients wait more than 60min). Also, sometimes there are
+still some unfinished patients at the closing time of some site,
+and the staffs there need to work significant overtime. In this chapter,
+we discuss a real-time queuing control policy to address these issues.
 
-There are two reasons that mainly account for this. First, health-care service usually consists of complicated process: patients need to be checked-in, triaged, do some lab testing, being seen by doctors, etc. If you look on the side of service provider, the picture is more complicated: patients information need to be managed, procedures need to coordinated, just to name a few. In each of these procedure, the may be some uncertainty: same procedure may takes random amount of time, there could be unexpected disrupts like machine failure, appointment cancellation, etc. All of this makes it very challenging to coordinate all procedures well and to have a consistent high service quality. The second reason is related to the fact that medical resources like doctor and machines are very expensive. In order to provide services to more patients, these resources need to be utilized very efficiently. This creates incentive for medical practitioners to make very tight schedules. Because there is limited leeway in the schedule, it's very easy for uncertainty and errors to propagate through the system and cause downstream impact. For example, patients may need to stay in waiting room for long time if something goes wrong for earlier patients.
+Patients need to make appointments in advance to reserve their slots.
+The slot size (of 15min resolution) depends on the type of scan the patient is scheduling.
+Due to high demand of MRI service, the machines often have tight
+schedules. Together with high variability in the procedures (more on
+shortly), they cause long waiting time and long overtime to happen.
 
-One obvious way to improve is to bring in more medical resources. However, as we indicated earlier, this comes with significant costs. At 2015, health-care related spending accounts for 17.1\% of united states' annual GDP. It would be unsustainable to keep spending more and more. As a result, we need to search for alternative approaches where service quality can be improved without incurring too much additional cost.
+There are several types of uncertainty that can cause reality to
+deviate from schedule. There are some Same Day Add-on Patients (SDAOP)
+that will show up without appointments. They're mostly urgent cases
+that need to be taken care of. There are also some same-day cancellation.
 
-Innovative technology has changed landscape of lots of traditional industry. For example, Google, Facebook, Uber, Airbnb fundmentally changed the way people search for information, contact family and friends, find a ride or seek short-term rental. It's becoming easier and easier to collect, transmit and analyze information. In health-care industry, information technology is also making great progress in making people's living easier and making cost lower. Facing with the challenge of improving service quality without bringing in much more very expensive medical resources, we may use information technology to identify ways to run the system more efficiently. Our work is in line with this thought.
+The most prevalent uncertainty is associated with scan duration and
+patient arrival time. MRI scans usually consist of about a dozen of
+image series, each with different scanning parameters. If the patient
+under scan moves too much during any series, the produced images
+may be too blurred. In this case, the staff will have to redo this series.
+Each series may take minutes, so redoing one will lengthen the scan
+duration by non-trivial amount. Besides, the scan procedure involves
+lots of human factors. Patients may need extra time to prepare themselves
+in the scan bed, some even experience claustrophobia. They may need to
+use restroom during scans. Even the number of images to acquire varies
+case by case.
 
-In this chapter, we describe our work with New York Presbyterian hospital. Historically, some patients experienced significant waiting time for their outpatient MRI modality. The reason is mostly tight schedules due to high demand for MRI services. The scheduling is done by the call center of the hospital. There are about 20 people receiving calls at call center at the same time and they need to handle lots of other issuses beyond scheduling: check patients' information, verify their medical insurance, just to name a few. So it's quite hard to synchronize and make scheduling decisions together. As a result, they resort to simple rules put together by management team. Every scan is allocated a time slot of size multiple of 15min. Certain scans can only be conducted at certain time of the day due to nursing staffing constraints. Although the staffs make their best efforts to produce nice schedules, congestion may still appear now and then.
+Patient arrival time is another source of uncertainty. Although most
+patients arrive on or before their appointment time, some may be
+significant late. This can be caused by bad traffic or the patient
+simply leaves home late. Some patients need medical care during
+transportation, so they will use Access-A-Ride which provides
+such medical care. However, since Access-A-Ride accommodates
+multiple patients per day and traffic in Manhattan is unpredictable,
+patients may come to their appointments significantly early or late.
 
-The hospital have three MRI facilities across Manhattan. This makes us to think whether we can exploit this fact to utilize resources more efficiently. In traditional queuing theory, we know that multiple-server queues perform better in terms of service quality, utilization compared with independent single-server queues. The reason is that customers can be served as soon as one resource become available and, thus, machines idle less. In our case, can we pool all three facilities together in some way to make it work more like a multiple-server queue? If achieved, this can increase the resources utilization and reduce patients waiting time at the same time without bringing in expensive new resource (a new MRI machines costs more than one million dollars). To overcome the problem that these facilities are not collocated, we use real-time information of each facility to make prediction into future. We speculate which facility is likely to run into congestion and which is not. We divert patients from congested site to ones that are not. In this way, we "pool" resources in all facilities together. Unbalance between schedules of all three sites may develop because of unexpected disruptions. We can discover that and smooth it out throughtout the day. Of course, patients may have personal constraints that they may not want to go to a different facility. We recognize this and give them the flexibility to decide whether or not to accept the diversion. We show that this approach can bring significant improvement on patient waiting time through simulation.
+The staffs usually refer to the situation of running behind the schedule
+as congestion. When significant congestion happens at one site, the staffs there
+will call other sites to see whether they can handle more patients. If so,
+ they may choose to send patients to other sites using taxi. This practice
+may help them balance loads among sites, but it also suffers from several
+drawbacks. First, the decision is made solely based on current site status.
+Sometimes the other site is already congested by the time patients arrive
+there. Second, after spending long time waiting at one site, the patients
+need to transported to another site. This brings inconvenience to both
+patients and staffs.
 
-The most closely related literature to our problem is appointment scheduling. There are very good surveys on this topic \cite{gupta2008appointment, cayirli2003outpatient}. In that setting, usually it's assumed that the health-care providers already knows about patients that they need to see for a certain day together with all stochastic characteristics associated with each patient. The question is to decide the optimal schedule (appointment times of each patient) to balance patient waiting time, resource idle time and overtime. Several articles \cite{kaandorp2007optimal,denton2003sequential,begen2011appointment} have studied this problem and proposed algorithms optimal under certain assumptions. However, these results are not very applicable in our case. By assuming that health-care service provider can decide appointment time for patients, it makes these results mainly applicable to inpatients case where patients are not constrained their personal time constraints. For outpatient case, the appointment time is usually result of negotiation between patient's personal time constraint and medical resource's availability. Good planning is of course essential for smooth running of the system, but it would be better if we can be more robust to react to unexpected disruptions. This is not addressed by the appointment scheduling literature.
+Inspired by their current practice, we developed a real-time queuing control
+approach to pool resources across three sites together. Instead of diverting
+patients after congestion develops, we predict when and where congestion will
+happen and react by diverting future patients to other sites. Oftentimes, this
+can prevent congestion to happen. Also, since we're diverting future patients
+who haven't shown up yet. They can directly go to the other site. This saves
+time and effort for both patients and staffs. We will describe our approach
+in details and show computational results.
+
+% admit machines are different, but
+% admit that process time can vary
+
+The most closely related literature to our problem is appointment scheduling.
+There are excellent surveys on this topic \cite{gupta2008appointment, cayirli2003outpatient}.
+In that setting, usually it's assumed that the health-care providers
+already knows about patients that they need to see for a certain day
+together with all stochastic characteristics associated with each patient.
+The question is to decide the optimal schedule (appointment times of
+each patient) to balance patient waiting time, resource idle time and
+overtime. Several articles \cite{kaandorp2007optimal,denton2003sequential,begen2011appointment}
+have studied this problem and proposed optimal algorithms under
+certain assumptions. However, the results are not very applicable
+in our case. The reason is that we're working with outpatients,
+so we can't really decide appointment times for patients. Nevertheless,
+important insights can be drawn from the literature to help make
+better schedules.

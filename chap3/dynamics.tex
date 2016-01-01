@@ -1,0 +1,134 @@
+\section{System dynamics}
+
+Our approach is to divert patients proactively to prevent
+congestion to happen. We set a lead time $l$. If we identify
+a beneficial diversion, we will call the patient $l$ time
+before his/her appointment time and offer the patient
+the opportunity to be diverted. The patient can accept or
+decline this diversion. All patients are marked volunteer
+or not. This information is acquired before the scan day.
+Only volunteers can be diverted. To make sure patients
+are incentived to cooperate, we try to pick diversions
+that will make the patient to be diverted wait less.
+
+We use discrete-event system to describe our system. We're going
+to describe the entities and their associated states. Then, we
+will describe all the events and how they change system states.
+Finally, we will describe the inputs of this model and how do
+we use data to fit these inputs.
+
+\subsection{Entities and states}
+
+There are multiple sites in the system:
+\begin{itemize}
+\item Each site has one or more machines.
+\item Each machine can process at most one patient at any time.
+Once a scan is started, it cannot be preempted.
+\item There is a single waiting room in each site to accomodate
+      patients who have arrived but haven't started the scans.
+\item Each site has a open time and a closing time for the day.
+      It's supposed it doesn't operate outside this time window.
+\end{itemize}
+We make a simplifying assumption here: all machines are homogeneous
+and are capable to conduct any types of scans. In reality, this is not
+true, but the difference is quite small that we think it's okay to
+ignore it.
+
+The central entity is appointment, each appointment is associated
+with one patient and has the following states:
+\begin{itemize}
+\item Appointment time
+\item Slot size
+\item Appointment status. This could be
+  \begin{itemize}
+  \item "scheduled but hasn't shown up"
+  \item "arrived and preparing for scan"
+  \item "ready for scan"
+  \item "under scan"
+  \item "scan completed"
+  \item "canceled"
+  \end{itemize}
+\item Assigned site. This may change due to diversion.
+\item Type of scan.
+\item Machine occupied. Only valid when patient is "under scan".
+\item Various timestamps
+  \begin{itemize}
+  \item Arrival time
+  \item Ready time
+  \item Scan begin time
+  \item Scan completion time
+  \end{itemize}
+\end{itemize}
+For the Same Day Add-on Patient (SDAOP), they will show up at
+a site without appointment. So in our system, there is no
+appointment for them until their arrivals.
+
+Last but not least, we also track the current time in the system.
+
+
+\subsection{Events}
+
+The following is all events that we consider
+\begin{itemize}
+\item Patient arrival. This happens when a patient arrives at
+      the assigned site. Note this can be a SDAOP.
+\item Patient ready. This happens when a patient finished preparation
+      after arriving at the site. The preparation may include filling
+      paperwork, changing clothes, being put on intravenous therapy (IV),
+      etc.
+\item Cancellation. This happens when a patient notify the hospital
+      that he/she will not fulfill the appointment.
+\item Scan begin. When a machine is idling, the patient who is ready
+      with earliest appointment time will be started.
+\item Scan completion.
+\item Diversion. This happens when we successfully divert a patient
+      to another site. 
+\end{itemize}
+We assume there is no no-show in numerical experiment. In practice,
+no-show is quite rare since it's not easy to get an appointment. So we think it's
+okay to omit it in numerical experiments. In practice, we can deal
+with no-show by changing the appointment's status to "canceled"
+when the patient doesn't show up by certain threshold after
+the appointment time. If the patient does show up later, we will
+change the status to "arrived and preparing for scan".
+
+We also assume all diversions are successful in numerical experiment.
+This is because we will experiment with different fraction of volunteers
+and low fraction of volunteers can be partially interpreted as
+unsuccessful diversions.
+
+\subsection{Model inputs}
+
+We will describe the inputs to our model and how to use historical
+data to get/fit them.
+
+The first input is the schedule at the beginning of the day.
+This includes all appointments across all sites. Ideally, we'd
+like to directly use historical schedules. However, the data have
+some issue so we instead generate synthetic schedule similar to
+historical schedules. More specifically, we make sure the number
+of scans of each type is proportional to that in history.
+
+For fraction of volunteers, we make this input a parameter that
+varies across different experiments. This can help us understand
+how much impact diversions can have given different level of
+flexbility from patients.
+
+We also need inputs on all the randomness in the system:
+\begin{itemize}
+\item Scan duration. For each type of scan, we fit an empirical
+scan duration from historical data and use that in simulation.
+\item Patient arrival time. We fit an empirical distribution on
+the difference between patients' arrival time and appointment time.
+\item Preparation time. We don't actually have data on this. However,
+we use the empirical distribution of the duration between arrival time
+and scan begin time of first patients in the day.
+\item Rate of SDAOP and cancellation. We use the empirical rate/probability
+for these.
+\end{itemize}
+We are making (admitted large) assumptions on these randomness.
+For example, when a site is running behind schedule, staffs
+may work faster. Scan duration is dependent on the current status
+of a site. There are lots of factors in reality and we cannot
+hope to model all of them. So we focus on constructing a model
+that is qualitatively similar enough to reality.
