@@ -132,3 +132,23 @@ may work faster. Scan duration is dependent on the current status
 of a site. There are lots of factors in reality and we cannot
 hope to model all of them. So we focus on constructing a model
 that is qualitatively similar enough to reality.
+
+
+\subsection{Metric}
+
+There are two things we care about: patient waiting time and
+site overtime. For one patient, if the appointment time is $a$
+and the scan begins at time $t$, then waiting time is defined
+to be
+\[  (t - a)^+ \]
+For each machine, the overtime $o$ is defined to be the amount of
+time this machine is working outside the operating time window
+of the site where the machine resides.
+
+We're not only interested in average waiting time/
+overtime, we are interested in the distribution of waiting time
+and overtime. For example, we pay lots of attention on numbers of extreme
+waiting time (for example, $\ge$60min or $\ge$90min waiting time)
+since they're very important for service quality perceived by patients.
+As a result, we will demonstrate the impact of diversions via
+multiple statistics on waiting time and overtime.

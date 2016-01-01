@@ -1,0 +1,107 @@
+\section{Policy}
+
+In this section, we're concerned with the policy we use to identify
+beneficial diversions. Before going to details, we'd like to discuss
+some potential benefits of diversions. First of all, we can at least
+balance loads between sites and let them share the pain when congestion
+happens. This alone can reduce extreme waiting time and extreme overtime.
+Secondly, we can make more efficient use of machine time. We can make
+use of the slot of canceled appointment or any gap in schedule.
+When a site is on schedule, idle time can develop whenever a scan finishes
+sooner than expected. But when a site is behind schedule, idle time is
+unlike to occur. Thus, when we let sites share the pain, we can make
+more efficient use of machine time across all sites.
+
+Now we'll discuss how the details on identifying beneficial diversions.
+
+\subsection{Objective}
+
+At the end of the day, given a outcome $\delta$, we'd like to measure
+its desirability with a objective function. Let $W(\delta)$ be the
+waiting time vector (one per patient) and $O(\delta)$ be the overtime
+vector (one per machine). We define the following objective
+\[  C(\delta) = ||W(\delta)||_2 + \lambda ||O(\delta)||_2 \]
+where $\lambda$ is a parameter controlling how much weight
+we put on overtime compared to waiting time.
+
+This objective captures both metrics in interest. The choice of
+$l2$-norm here expresses our preference on eliminating cases of
+extreme long waiting time and extreme long overtime. This will
+also encourage diversions that let sites share the pain.
+
+Another usage of this objective is to prevent the system to
+divert patients to sites that are supposed to be close.
+If we use $l1$-norm, this may not be achieved. Suppose Site A
+closes earlier than Site B. If Site B is congested, diversion
+into Site A when it's supposed to close can keep the total
+overtime the same while reducing waiting time. However,
+$l2$-norm can prevent this from happening (to larger extent
+compared with $l1$-norm).
+
+\subsection{Choosing diversions}
+
+$l$ time before the appointment time of some patient, we need to
+decide whether to divert this patient to another site if this
+patient is a volunteer. However, the outcome is stochastic in
+nature whether we divert the patient or not. Consider a diversion
+$D$. Suppose without $D$ (and any future diversions), we will
+reach random outcome $\delta$. With $D$ (but still no future
+diversions), we will reach random outcome $\delta'$. Let
+$P(\delta), P(\delta')$ be the random waiting times for the patient 
+to be diverted. We say $D$ is a \textit{valid} diversion if
+\begin{align*}
+  p_c = \mathbb{P}[C(\delta') < C(\delta)] \ge \theta_c   \\
+  p_p = \mathbb{P}[P(\delta') < P(\delta)] \ge \theta_p
+\end{align*}
+where $\theta_c, \theta_p$ are two treshold controlling how
+aggressive/conservative we are. High threshold ensures we will
+see improvement for sure, but there may only be very few
+diversion options.
+
+The critierion is to make sure a diversion will leads to
+improved objective value and less waiting time for diverted
+patient with sufficient probability.
+
+It's impossible to know $\mathbb{P}[C(\delta') < C(\delta)],
+\mathbb{P}[P(\delta') < P(\delta)]$. So we need to approximate
+them, we decide to use simulation to estimate these probabilities.
+
+We will generate a random vector $\xi$ includes
+\begin{itemize}
+\item The scan durations of all patients.
+\item The arrival time of all patients.
+\item The preparation time of all patients.
+\end{itemize}
+We sample all these from the corresponding empirical distribution,
+possibly conditioning on information in hand at current time
+(for example, for in-progress patient, we know how long the patient
+has been under scan). We omit cancellation and SDAOP since
+they're low probability event and hard to predict.
+
+With $\xi$, we can simulate the system with/without diversion $D$
+and assess the outcome. To make estimation more accurate, we will
+in total general $k$ random vectors $\xi_1, \ldots, \xi_k$, each
+corresponding to one scenario. And let $\delta(\xi_1), \ldots,
+\delta(\xi_k)$ be outcomes without $D$ and $\delta'(\xi_1), \ldots,
+\delta'(\xi_k)$ be outcomes with $D$. We use the fraction of
+scenarios where $C(\delta'(\xi_i)) < C(\delta'(\xi_i))$ as
+estimated objective improvement probability $\tilde p_c$. We use the fraction
+of scenarios where $P(\delta'(\xi_i)) < P(\delta'(\xi_i))$ as
+estimated less waiting (for diverted patient) probability $\tilde p_p$.
+If $\tilde p_c \ge \theta_c$ and $\tilde p_p \ge \theta_p$, we say
+this diversion is \textit{approximately valid}. Here we are
+comparing pairs of outcomes coupled with same random vectors.
+This technique is called Common Random Numbers and can help
+reduce variance when comparing outcomes.
+
+If there is no \textit{approximately valid diversions}, we will
+keep the patient at his/her current site. Otherwise, we will
+choose the diversion with highest estimated objective improvement
+probability $\tilde p_c$.
+
+We're basically greedily diverting patients. This is obviously
+suboptimal. However, modeling this decision problem as Stochastic
+Dynamic Programming leads to a formulation that is very hard to
+solve. The simple approach we take is easy to compute and easy
+to interpret. It's also extensible that we can incorporate other
+desirable property in choosing diversions.
