@@ -99,33 +99,26 @@ unsuccessful diversions.
 
 \subsection{Model inputs}
 
-We will describe the inputs to our model and how to use historical
-data to get/fit them.
-
-The first input is the schedule at the beginning of the day.
-This includes all appointments across all sites. Ideally, we'd
-like to directly use historical schedules. However, the data have
-some issue so we instead generate synthetic schedule similar to
-historical schedules. More specifically, we make sure the number
-of scans of each type is proportional to that in history.
-
-For fraction of volunteers, we make this input a parameter that
-varies across different experiments. This can help us understand
-how much impact diversions can have given different level of
-flexbility from patients.
-
-We also need inputs on all the randomness in the system:
+The model needs following inputs
 \begin{itemize}
-\item Scan duration. For each type of scan, we fit an empirical
-scan duration from historical data and use that in simulation.
-\item Patient arrival time. We fit an empirical distribution on
-the difference between patients' arrival time and appointment time.
-\item Preparation time. We don't actually have data on this. However,
-we use the empirical distribution of the duration between arrival time
-and scan begin time of first patients in the day.
-\item Rate of SDAOP and cancellation. We use the empirical rate/probability
-for these.
+\item The schedule at the beginning of the day. This includes
+      appointments across all sites.
+\item The set of patients who are volunteers.
+\item The distribution of arrival time per appointment.
+\item The distribution of preparation time per appointment.
+\item The distribution of scan duration per appointment.
+\item The set of SDAOPs and their arrival time.
+\item Cancellations.
 \end{itemize}
+Here we describe a ideal scenario where we know distributional
+information for each appointment. In practice, we need to
+use historical data to fit these distributions and we cannot
+hope to reach the granularity of per appointment level.
+For scan duration, we fit one distribution per type of scan.
+For arrival time and preparation time, we fit one distribution
+for each for the whole population. For sure, this can be further
+improved with more effort.
+
 We are making (admitted large) assumptions on these randomness.
 For example, when a site is running behind schedule, staffs
 may work faster. Scan duration is dependent on the current status
@@ -133,6 +126,13 @@ of a site. There are lots of factors in reality and we cannot
 hope to model all of them. So we focus on constructing a model
 that is qualitatively similar enough to reality.
 
+These model inputs are used to simulate operation for one day.
+We don't allow our diversion policy to peek into future, so
+the policy is not aware of SDAOPs and cancellation until they
+happens.
+
+We will discuss how to fit these inputs in the section for
+numerical experiments.
 
 \subsection{Metric}
 

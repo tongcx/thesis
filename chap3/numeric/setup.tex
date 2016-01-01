@@ -11,8 +11,12 @@ across Manhattan. They are named after their address: York Ave, 55th St and
 West 84th St. See Figure \ref{fig:site}. The two sites on each side is very
 close to each other, it's only 15min walking distance. The one on west side
 is a bit further, it's 15min driving distance without traffic.
-Based on this, we think 1 hour lead time is enough for patient to
-plan for a different facility.
+The patients usually arrive at their site 30min before their appointment
+time to prepare so that they can be ready by the appointment time.
+Thus, if we call patient 1 hour before their appointment times, this
+would mean they have 30min to react to the change. This could be reasonable
+given the short distance between the sites. We also experiment with 90min
+lead time, which gives patients 60min to react.
 
 \begin{figure}
 \centering
@@ -38,55 +42,51 @@ the impact of resource pooling without worrying about unbalance in
 processing capacities across sites.
 
 \paragraph{Data}
-
 We have three years data of historical MRI scans. For each of these
 scans, we have the type of scan, its appointment time, when patient
-arrived, when scan began and when scan finished. One thing is missing
-here is how much time is needed for patients to prepare before scan.
-We overcome this by looking at the first patients processed each day,
-and use the difference between their arrival time and scan begin time
-as preparation time. Since the first patients don't need to stay in
-waiting room, so it's reasonable to assume all time between arrival
-and scan begin are used for preparation.
+arrived, when scan began and when scan finished. The data we have
+isn't perfect, but we can fit reasonable model inputs from it.
 
-From the historical data, we gathered distribution information on
-several things.
 \begin{itemize}
-\item Scan duration distribution of each type of scan.
-\item Patient's arrival time distribution with respect to
-their appointment time.
-\item The preparation time distribution.
-\item Distribution on number of SDAOP showing up in each site.
-\item Probability of appointment cancellation.
+\item Initial schedule for the day. We'd like our schedule to have
+  same distribution of scans of each type with the historical one.
+  We also know, for each type of scan, the slot size allocated.
+  Combining these, we generate synthetic schedules sharing similar
+  properties with historical ones.
+\item The set of patients who are volunteers. We make the fraction
+  of volunteers a parameter that varies across experiments.
+  This can help us understand how much impact diversions can have
+  given different level of flexbility from patients.
+\item Patient arrival time. We fit one empirical distribution on
+  the difference between patients' arrival time and appointment time.
+\item Preparation time. We don't actually have timestamp data on this.
+  We overcome this by looking at the first patients processed each day,
+  and use the difference between their arrival time and scan begin time
+  as preparation time. Since the first patients don't need to stay in
+  waiting room, so it's reasonable to assume all time between arrival
+  and scan begin are used for preparation. We fit one empirical distribution
+  based on this.
+\item Scan duration. For each type of scan, we fit an empirical
+  scan duration from historical data.
+\item The set of SDAOPs and their arrival time. We get the rate of
+  SDAOPs from historical data and generate SDAOPs as Possion process.
+\item Cancellations. We calculate the historical probability of cancellation.
+  Then for each appointment, we independently make it a cancellation with
+  the historical probability.
 \end{itemize}
-In addition, we also know the slot size allocated for each type of scans.
-
-In our experiments, we generate daily schedules similar to what NYP have in reality.
-Then for each appointment, we will sample from the gathered distribution its
-scan duration, patient arrival time and patient preparation time. We will also
-sample a random variable indicating whether the appointment will be canceled.
-In addition, we will also sample SDAOP and their arrival time. With all of these,
-we can simulate the operations of a day.
-
-Of course, when our policy is making decision, those sampled random variables
-won't be visible. Thus, we can only make decisions based on distributional
-information.
-
-Ideally, we'd like to just replay history and test our policy with real
+Ideally, we'd like to test our policy by replaying history with real
 scan duration, arrival time for each historical appointment. However,
 the data we obtain isn't perfect. There are some critical fields missing
-so we cannot exactly reconstruct history. Also, sometimes, there are
+so we cannot exactly reconstruct history. Also, there are often
 error on timestamps that can greatly impact how the daily schedule looks like.
 To prevent these data issues to interfere with our experiments, we choose
-to experiment with constructed schedules.
+to experiment with synthetic schedules.
 
-Another thing is that one is one can presumably predict the scan duration and
+One can improve the inputs by predicting the scan duration and
 arrival time better using more information. For example, the patients'
-health condition, diagnosis, home address and other information should be
+health condition, diagnosis, home address and other information can be
 helpful to make better prediction. However, we don't access to those
-sensitive health information. But we believe if we can use machine learning
-techniques to make better prediction on all the randomness in the system,
-our diversion policy will perform better.
+sensitive health information.
 
 \paragraph{Parameters}
 
@@ -101,5 +101,6 @@ and for our optimization procedure. We describe our choice of them here.
   \item Overtime weight $\lambda = 10$, this reflects the fact overtime is quite valuable.
   \item $\theta_c = 0.7, \theta_p = 0.7$. We choose the confidence threshold on objective value
     and waiting time of diverted patient to be neither too aggressive nor too conservative.
-  \item The number of samples $k=100$.
+  \item The number of samples to evaluate quality of diversions $k=100$.
+  \item The number of simulated days to estimate policy performance per experiment $k'=100$.
 \end{itemize}
