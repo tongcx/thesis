@@ -1,20 +1,23 @@
 \section{System dynamics}
 
 Our approach is to divert patients proactively to prevent
-congestion to happen. We set a lead time $l$. If we identify
+congestion from happening. If we identify
 a beneficial diversion, we will call the patient $l$ time
-before his/her appointment time and offer the patient
-the opportunity to be diverted. The patient can accept or
-decline this diversion. All patients are marked volunteer
-or not. This information is acquired before the scan day.
-Only volunteers can be diverted. To make sure patients
-are incentived to cooperate, we try to pick diversions
+before his appointment time and offer the patient
+the opportunity to be diverted, when the parameter $l$
+is a lead time that can be adjusted. The patient can accept or
+decline this diversion. In fact, we propose a system where
+a patient must first "opt in", or volunteers to be called
+for a potential diversion. The patient's "volunteer" status
+is determined before the scan day and only volunteers
+will be diverted. To make sure patients
+are incentivized to cooperate, we aim to pick diversions
 that will make the patient to be diverted wait less.
 
-We use discrete-event system to describe our system. We're going
+We use a discrete-event system to describe our system. We are going
 to describe the entities and their associated states. Then, we
-will describe all the events and how they change system states.
-Finally, we will describe the inputs of this model and how do
+will describe all of the events and how they change system states.
+Finally, we will describe the inputs of this model and how
 we use data to fit these inputs.
 
 \subsection{Entities and states}
@@ -23,18 +26,20 @@ There are multiple sites in the system:
 \begin{itemize}
 \item Each site has one or more machines.
 \item Each machine can process at most one patient at any time.
-Once a scan is started, it cannot be preempted.
-\item There is a single waiting room in each site to accomodate
-      patients who have arrived but haven't started the scans.
-\item Each site has a open time and a closing time for the day.
-      It's supposed it doesn't operate outside this time window.
+  Once a scan is started, it cannot be preempted (that is, that
+  patient's scan must be completed before the next patient's
+  scan to start)
+\item There is a single waiting room at each site to accomodate
+      patients who have arrived but have not yet started their scans.
+\item Each site has a opening time and a closing time for each day.
+      The site is supposed to only operate only inside this time window.
 \end{itemize}
 We make a simplifying assumption here: all machines are homogeneous
-and are capable to conduct any types of scans. In reality, this is not
-true, but the difference is quite small that we think it's okay to
-ignore it.
+and are capable to conduct any type of scan. In reality, this is not
+true, but we believe the effects of the few cases in which this becomes
+relevant do not justify the complicating in our overall model.
 
-The central entity is appointment, each appointment is associated
+The central entity is an appointment. Each appointment is associated
 with one patient and has the following states:
 \begin{itemize}
 \item Appointment time
@@ -46,7 +51,7 @@ with one patient and has the following states:
   \item "ready for scan"
   \item "under scan"
   \item "scan completed"
-  \item "canceled"
+  \item "cancelled"
   \end{itemize}
 \item Assigned site. This may change due to diversion.
 \item Type of scan.
@@ -59,47 +64,46 @@ with one patient and has the following states:
   \item Scan completion time
   \end{itemize}
 \end{itemize}
-For the Same Day Add-on Patient (SDAOP), they will show up at
-a site without appointment. So in our system, there is no
-appointment for them until their arrivals.
+Same-Day Add-On Patient (SDAOP) will appear at
+a site without an appointment. Similarly in our system, there is no
+appointment for them until their arrival.
 
 Last but not least, we also track the current time in the system.
 
 
 \subsection{Events}
 
-The following are all events that we consider
+The following a complete enumeration of all events that we consider:
 \begin{itemize}
 \item Patient arrival. This happens when a patient arrives at
       the assigned site. Note this can be a SDAOP.
-\item Patient ready. This happens when a patient finished preparation
-      after arriving at the site. The preparation may include filling
-      paperwork, changing clothes, being put on intravenous therapy (IV),
-      etc.
-\item Cancellation. This happens when a patient notify the hospital
-      that he/she will not fulfill the appointment.
+\item Patient ready. This happens when a patient has finished his preparation
+      after arriving at the site. The preparation may include completing
+      paperwork, changing clothes and being put on an intravenous therapy (IV).
+\item Cancellation. This happens when a patient notifies the hospital
+      that he will not fulfill the appointment.
 \item Scan begin. When a machine is idling, the patient who is ready
       with earliest appointment time will be started.
 \item Scan completion.
 \item Diversion. This happens when we successfully divert a patient
       to another site. 
 \end{itemize}
-We assume there is no no-show in numerical experiment. In practice,
-no-show is quite rare since it's not easy to get an appointment. So we think it's
-okay to omit it in numerical experiments. In practice, we can deal
-with no-show by changing the appointment's status to "canceled"
-when the patient doesn't show up by certain threshold after
+In numerical experiments, we shall assume there are no "no-show".
+In practice, a no-show is quite rare since it is not easy to get an appointment,
+and we believe this implication is appropriate. In practice, we can deal
+with a no-show by changing the appointment's status to "cancelled"
+when the patient doesn't arrive within a certain threshold of
 the appointment time. If the patient does show up later, we will
 change the status to "arrived and preparing for scan".
 
-We also assume all diversions are successful in numerical experiment.
-This is because we will experiment with different fraction of volunteers
-and low fraction of volunteers can be partially interpreted as
+In numerical experiments, we also assume all diversions are successful.
+The justification for this is that will experiment with different fraction of volunteers
+and a low fraction of volunteers can be partially interpreted as
 unsuccessful diversions.
 
 \subsection{Model inputs}
 
-The model needs following inputs
+The model needs the following inputs:
 \begin{itemize}
 \item The schedule at the beginning of the day. This includes
       appointments across all sites.
@@ -119,12 +123,15 @@ For arrival time and preparation time, we fit one distribution
 for each for the whole population. For sure, this can be further
 improved with more effort.
 
-We are making (admitted large) assumptions on these randomness.
-For example, when a site is running behind schedule, staffs
-may work faster. Scan duration is dependent on the current status
-of a site. There are lots of factors in reality and we cannot
+We are making (admitted large) assumptions on these sources of randomness.
+For example, when a site is running behind schedule, staff
+may work faster. In fact, scan duration is dependent on the current status
+of a site (in terms of the congestion being observed).
+There are many factors in reality and we cannot
 hope to model all of them. So we focus on constructing a model
-that is qualitatively similar enough to reality.
+that is qualitatively similar enough to reality, and show that our
+results are robust under a range of parameters influencing the
+behaviors of the system.
 
 These model inputs are used to simulate operation for one day.
 We don't allow our diversion policy to peek into future, so
@@ -140,15 +147,15 @@ There are two things we care about: patient waiting time and
 site overtime. For one patient, if the appointment time is $a$
 and the scan begins at time $t$, then waiting time is defined
 to be
-\[  (t - a)^+ \]
+\[  (t - a)^+. \]
 For each machine, the overtime $o$ is defined to be the amount of
 time this machine is working outside the operating time window
 of the site where the machine resides.
 
-We're not only interested in average waiting time/
+We are not only interested in average waiting time and
 overtime, we are interested in the distribution of waiting time
-and overtime. For example, we pay lots of attention on numbers of extreme
-waiting time (for example, $\ge$60min or $\ge$90min waiting time)
-since they're very important for service quality perceived by patients.
+and overtime. For example, we pay particular attention to extreme
+waiting times (for example, $\ge$60 minutes or $\ge$90 minutes of waiting time)
+since they are very important for the service quality perceived by patients.
 As a result, we will demonstrate the impact of diversions via
 multiple statistics on waiting time and overtime.

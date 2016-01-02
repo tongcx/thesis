@@ -1,69 +1,71 @@
 \section{Policy}
 
-In this section, we're concerned with the policy we use to identify
-beneficial diversions. Before going to details, we'd like to discuss
-some potential benefits of diversions. First of all, we can at least
-balance loads between sites and let them share the pain when congestion
+In this section, we are concerned with the policy we use to identify
+beneficial diversions. Before going into details, we will first discuss
+some potential benefits of diversions. First, we can at least
+balance workload between sites and let them share the pain when congestion
 happens. This alone can reduce extreme waiting time and extreme overtime.
-Secondly, we can make more efficient use of machine time. We can make
-use of the slot of canceled appointment or any gap in schedule.
-When a site is on schedule, idle time can develop whenever a scan finishes
+Second, we can make more efficient use of machine time. The reason for this
+is that it allows us to make use of the slot of canceled appointment
+or any gap in schedule;when a site is on schedule, idle
+time can develop whenever a scan finishes
 sooner than expected. But when a site is behind schedule, idle time is
-unlike to occur. Thus, when we let sites share the pain, we can make
+unlikely to occur. Thus, when we let sites share the pain, we can make
 more efficient use of machine time across all sites.
 
-Now we'll discuss how the details on identifying beneficial diversions.
+Now we shall discuss the details how we identify beneficial diversions.
 
 \subsection{Objective}
 
-At the end of the day, given a outcome $\delta$, we'd like to measure
-its desirability with a objective function. Let $W(\delta)$ be the
+At the end of the day, given a outcome $\delta$, we wish to measure
+its desirability with an objective function. Let $W(\delta)$ be the
 waiting time vector (one component per patient) and $O(\delta)$ be the overtime
 vector (one component per machine). We define the following objective
-\[  C(\delta) = ||W(\delta)||_2 + \lambda ||O(\delta)||_2 \]
+\[  C(\delta) = ||W(\delta)||_2 + \lambda ||O(\delta)||_2, \]
 where $\lambda$ is a parameter controlling how much weight
 we put on overtime compared to waiting time.
 
-This objective captures both metrics in interest. The choice of
-$l2$-norm here expresses our preference on eliminating cases of
-extreme long waiting time and extreme long overtime. This will
-also encourage diversions that let sites share the pain.
+This objective captures both metrics of interest. The choice of
+$L_2$-norm here expresses our preference for eliminating cases of
+extremely long waiting time and extremely long overtime. This will
+also encourage diversions that allow sites to share the pain.
 
-Another usage of this objective is to prevent the system to
-divert patients to sites that are supposed to be close.
-If we use $l1$-norm, this may not be achieved. Suppose Site A
+Another aim of this objective function is to prevent the system from
+diverting patients to sites that are supposed to be closed.
+If we use $L_1$-norm, this might not be achieved. Suppose that Site A
 closes earlier than Site B. If Site B is congested, diversion
-into Site A when it's supposed to close can keep the total
-overtime the same while reducing waiting time. However,
-$l2$-norm can prevent this from happening (to larger extent
-compared with $l1$-norm).
+to Site A when it is supposed to be closed can keep the total
+overtime the same; while reducing waiting time. However,
+$L_2$-norm can prevent this from happening (to a larger extent
+when compared with the $L_1$-norm).
 
 \subsection{Choosing diversions}
 
-$l$ time before the appointment time of some patient, we need to
-decide whether to divert this patient to another site if this
-patient is a volunteer. However, the outcome is stochastic in
+For our given lead time $l$, $l$ time units before the appointment
+time of each patient who is a volunteer, we need to
+decide whether to divert this patient to another site. However, the
+outcome is stochastic in
 nature whether we divert the patient or not. Consider a diversion
-$D$. Suppose without $D$ (and any future diversions), we will
+$D$. Suppose without $D$ (and without any future diversions), we will
 reach random outcome $\delta$. With $D$ (but still no future
 diversions), we will reach random outcome $\delta'$. Let
 $P(\delta), P(\delta')$ be the random waiting times for the patient 
-to be diverted. We say $D$ is a \textit{valid} diversion if
+to be diverted. We say $D$ is a \textit{valid} diversion if both
 \begin{align*}
   p_c = \mathbb{P}[C(\delta') < C(\delta)] \ge \theta_c   \\
   p_p = \mathbb{P}[P(\delta') < P(\delta)] \ge \theta_p
 \end{align*}
-where $\theta_c, \theta_p$ are two treshold controlling how
-aggressive/conservative we are. High threshold ensures we will
-see improvement for sure, but there may only be very few
+where $\theta_c, \theta_p$ are two thresholds controlling how
+aggressive/conservative we are. High thresholds ensure we will
+see improvement for sure, but there might be only very few
 diversion options.
 
-The critierion is to make sure a diversion will leads to
-improved objective value and less waiting time for diverted
-patient with sufficient probability.
+The critierion is to make sure a diversion will lead to an
+improved objective value and less waiting time for a diverted
+patient with sufficiently high probability.
 
-It's impossible to know $\mathbb{P}[C(\delta') < C(\delta)],
-\mathbb{P}[P(\delta') < P(\delta)]$. So we need to approximate
+It is impossible to compute $\mathbb{P}[C(\delta') < C(\delta)]$ and
+$\mathbb{P}[P(\delta') < P(\delta)]$ precisely. So we need to approximate
 them, we decide to use simulation to estimate these probabilities.
 
 We will generate a random vector $\xi$ includes

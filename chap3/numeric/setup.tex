@@ -59,7 +59,7 @@ isn't perfect, but we can fit reasonable model inputs from it.
   given different level of flexbility from patients.
 \item Patient arrival time. We fit one empirical distribution on
   the difference between patients' arrival time and appointment time.
-\item Preparation time. We don't actually have timestamp data on this.
+\item Preparation time. We do not actually have timestamp data for this.
   We overcome this by looking at the first patients processed each day,
   and use the difference between their arrival time and scan begin time
   as preparation time. Since the first patients don't need to stay in
@@ -74,10 +74,10 @@ isn't perfect, but we can fit reasonable model inputs from it.
   Then for each appointment, we independently make it a cancellation with
   the historical probability.
 \end{itemize}
-Ideally, we'd like to test our policy by replaying history with real
+Ideally, we would like to test our policy by replaying history with real
 scan duration, arrival time for each historical appointment. However,
-the data we obtain isn't perfect. There are some critical fields missing
-so we cannot exactly reconstruct history. Also, there are often
+the data we obtain is incomplete. There are some critical fields missing
+and we cannot exactly reconstruct history. Also, there are often
 error on timestamps that can greatly impact how the daily schedule looks like.
 To prevent these data issues to interfere with our experiments, we choose
 to experiment with synthetic schedules.
@@ -96,7 +96,7 @@ and for our optimization procedure. We describe our choice of them here.
 \begin{itemize}
   \item Volunteer probability. We vary the percent of patients who are willing
     to be volunteer. This will allow us to see the effect of our policy
-    with varying level of flexibility.
+    with varying levels of flexibility.
   \item Lead time. We experiment with both 60min and 90min lead time.
   \item Overtime weight $\lambda = 10$, this reflects the fact overtime is quite valuable.
   \item $\theta_c = 0.7, \theta_p = 0.7$. We choose the confidence threshold on objective value

@@ -1,80 +1,85 @@
 \section{Introduction}
 
-New York Presbyterian (NYP) hospital operates a big outpatient MRI service
-consists of three nearby sites within Manhattan with 7 machines in total.
-They provide services of hundreds types of scans and they process about 100
+New York Presbyterian (NYP) Hospital operates a large outpatient MRI service that
+consists of three nearby sites within Manhattan, with 7 machines in total.
+They provide services, to hundreds of types of scans and they process roughly 100
 patients per day. However, patients sometimes experience long waiting time
-(about 20\% patients wait more than 60min). Also, sometimes there are
-still some unfinished patients at the closing time of some site,
-and the staffs there need to work significant overtime. In this chapter,
-we discuss a real-time queuing control policy to address these issues.
+-about 20\% of all patients wait more than 60 minutes. Futhermore, there are
+still unfinished patients at the closing time of a site,
+so sometimes the staffs there needs to work a significant amount of overtime. In this chapter,
+we discuss a real-time queuing control policy to address these issues,
+and a practical implementation to make this feasbile, which takes advantage
+of the modern-day reachabilities of patients just prior to their scheduled
+appointment.
 
 Patients need to make appointments in advance to reserve their slots.
-The slot size (of 15min resolution) depends on the type of scan the patient is scheduling.
-Due to high demand of MRI service, the machines often have tight
-schedules. Together with high variability in the procedures (more on
-shortly), they cause long waiting time and long overtime to happen.
+The slot size, which is of length always an integer multiple of 15 minutes,
+depends on the type of scan that the patient is scheduling.
+Due to the high demand of MRI services, these machines often have tight
+schedules. Together with the high variability in the procedures (which we
+shall discuss in details below), these tight schedules cause long waiting times
+and substantial overtime to occur.
 
-There are several types of uncertainty that can cause reality to
-deviate from schedule. There are some Same Day Add-on Patients (SDAOP)
-that will show up without appointments. They're mostly urgent cases
-that need to be taken care of. There are also some same-day cancellation.
+There are several types of uncertainties that can cause reality to
+deviate from the original schedule. There are some Same-Day Add-on Patients (SDAOP)
+that will show up without appointments. These are mostly urgent cases
+that need to be taken care of. There are also some same-day cancellations.
 
 The most prevalent uncertainty is associated with scan duration and
 patient arrival time. MRI scans usually consist of about a dozen of
 image series, each with different scanning parameters. If the patient
-under scan moves too much during any series, the produced images
-may be too blurred. In this case, the staff will have to redo this series.
-Each series may take minutes, so redoing one will lengthen the scan
-duration by non-trivial amount. Besides, the scan procedure involves
-lots of human factors. Patients may need extra time to prepare themselves
-in the scan bed, some even experience claustrophobia. They may need to
-use restroom during scans. Even the number of images to acquire varies
-case by case.
+being scanned moves too much during any series, the images produced
+might be too blurred. In this case, the staff will have to redo this series.
+Each series can take minutes, so redoing one will lengthen the scan
+duration by a non-trivial amount. Futhermore, the scan procedure involves
+many human factors. Patients might need extra time to prepare themselves
+in the scan bed, and some even experience claustrophobia. Patients may need to
+use the restroom during scans. Even the number of images to acquire depends
+on the body size of the patients, and varies case by case.
 
 Patient arrival time is another source of uncertainty. Although most
 patients arrive on or before their appointment time, some may be
-significant late. This can be caused by bad traffic or the patient
-simply leaves home late. Some patients need medical care during
-transportation, so they will use Access-A-Ride which provides
+significantly late. This can be caused by bad traffic or the patient
+simply leaves home late. Some patients need medical care while being
+transported, and they will use Access-A-Ride which provides
 such medical care. However, since Access-A-Ride accommodates
 multiple patients per day and traffic in Manhattan is unpredictable,
-patients may come to their appointments significantly early or late.
+patients might come to their appointments significantly early or late.
 
-The staffs usually refer to the situation of running behind the schedule
-as congestion. When significant congestion happens at one site, the staffs there
+The staff usually refers to the situation of running behind schedule
+as congestion. When significant congestion happens at one site, the staff there
 will call other sites to see whether they can handle more patients. If so,
  they may choose to send patients to other sites using taxi. This practice
 may help them balance loads among sites, but it also suffers from several
 drawbacks. First, the decision is made solely based on current site status.
-Sometimes the other site is already congested by the time patients arrive
-there. Second, after spending long time waiting at one site, the patients
-need to transported to another site. This brings inconvenience to both
-patients and staffs.
+Sometimes, the other site is already congested by the time that the transported patient
+arrives there. Second, after spending a long time waiting at one site, the patient
+needs to be transported to another site. This brings inconvenience to both
+patients and staff.
 
 Inspired by their current practice, we developed a real-time queuing control
-approach to pool resources across three sites together. Instead of diverting
+approach to pool resources across the three sites together. Instead of diverting
 patients after congestion develops, we predict when and where congestion will
-happen and react by diverting future patients to other sites. Oftentimes, this
-can prevent congestion to happen. Also, since we're diverting future patients
-who haven't shown up yet. They can directly go to the other site. This saves
-time and effort for both patients and staffs. We will describe our approach
-in details and show computational results.
+happen and react by diverting future patients to other sites. Frequently, this
+can prevent congestion to happen. Also, since we are diverting future patients
+who haven not shown up yet, they can go directly to the other site. This saves
+time and effort for both patients and staff. We will describe our approach
+in details and show computational results. In fact, our simulation result
+based on 3 years of historical data shows that diverting just 3 patients per
+day can lead to significant improvement in the number of patients experiencing
+very long waiting time staff overtime.
 
-% admit machines are different, but
-% admit that process time can vary
-
-The most closely related literature to our problem is appointment scheduling.
+The most closely related literature to our problem is in appointment scheduling.
 There are excellent surveys on this topic \cite{gupta2008appointment, cayirli2003outpatient}.
-In that setting, usually it's assumed that the health-care providers
-already knows about patients that they need to see for a certain day
+In this setting, usually it is assumed that the health-care providers
+already know about patients that must be seen on a particular day,
 together with all stochastic characteristics associated with each patient.
 The question is to decide the optimal schedule (appointment times of
 each patient) to balance patient waiting time, resource idle time and
 overtime. Several articles \cite{kaandorp2007optimal,denton2003sequential,begen2011appointment}
 have studied this problem and proposed optimal algorithms under
 certain assumptions. However, the results are not very applicable
-in our case. The reason is that we're working with outpatients,
-so we can't really decide appointment times for patients. Nevertheless,
+in our case. The reason is that we are working with outpatient facility,
+and we cannot really decide appointment times for patients. Nevertheless,
 important insights can be drawn from the literature to help make
 better schedules.
