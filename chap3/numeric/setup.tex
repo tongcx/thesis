@@ -3,7 +3,7 @@
 \paragraph{Scenarios}
 
 In this section, we describe the two scenarios that we experiment with,
-the historial data we have, and the choice of parameters for our policy.
+the historical data we have, and the choice of parameters for our policy.
 
 The first scenario is based on the real-life case of New York Presbyterian
 (NYP) Hospital. NYP Hospital has three different sites for outpatients MRI
@@ -48,36 +48,33 @@ the patient arrived, when the scan began and when the scan finished. The data we
 is not perfect, but we are able to fit reasonable model inputs based on it.
 
 \begin{itemize}
-\item Initial schedule for the day. We wish our schedule to have
-  same distribution of scans of each type with the historical one.
-  We also know, for each type of scan, the slot size allocated.
-  Combining these, we generate synthetic schedules sharing similar
-  properties with historical ones.
+\item Initial schedule for the day. We generate synthetic schedules
+  where the number of scans of each type is proportional to the
+  number of historical scans of that type.
 \item The set of patients who are volunteers. We make the fraction
   of volunteers a parameter that varies across experiments.
-  This can help us understand how much impact diversions can have
-  given different level of flexbility from patients.
+  This can help us understand the amount of impact diversions have
+  with different levels of flexibility from patients.
 \item Patient arrival time. We fit one empirical distribution on
-  the difference between patients' arrival time and appointment time.
+  the difference between patient's arrival time and appointment time.
 \item Preparation time. We do not actually have the timestamp data for this.
-  We overcome this difficulty by looking at the first patient processed each day,
+  We overcome this difficulty by considering the first patient processed each day,
   and use the difference between their arrival time and scan begin time
-  as the preparation time. Since the first patient does not need to stay in
-  waiting room, it is reasonable to assume that all of the time between the arrival
+  as the preparation time. Since the first patient does not need to stay in the
+  waiting room, it is reasonable to assume that all of the time between the arrival time
   and scan begin time is used for preparation. We fit one empirical distribution
   based on this.
 \item Scan duration. For each type of scan, we fit an empirical
-  scan duration from historical data.
-\item The set of SDAOPs and their arrival time. We get the rate of
-  SDAOPs from historical data and generate SDAOPs as Possion process.
-\item Cancellations. We calculate the historical probability of cancellation.
-  Then for each appointment, we independently make it a cancellation with
-  the historical probability.
+  scan duration distribution from historical data.
+\item The set of SDAOPs and their arrival time. We calculate the rate of
+  SDAOPs in history and generate SDAOPs using Possion process.
+\item Cancellations. We calculate the historical probability of cancellation,
+  and randomly select appointments that will be cancelled later.
 \end{itemize}
 Ideally, we would like to test our policy by replaying history with the real
 scan duration and actual arrival time for each historical appointment. However,
 the data we obtained is incomplete. There are some critical fields missing
-and we cannot exactly reconstruct history. Futhermore, there are occasional
+and we cannot exactly reconstruct history. Furthermore, there are occasional
 errors on timestamps that can greatly impact how the daily schedule appears.
 To prevent these data issues from interfering with our experiments, we chose
 to experiment with our constructed synthetic schedules.

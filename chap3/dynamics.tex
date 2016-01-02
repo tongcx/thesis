@@ -29,7 +29,7 @@ There are multiple sites in the system:
   Once a scan is started, it cannot be preempted (that is, that
   patient's scan must be completed before the next patient's
   scan to start)
-\item There is a single waiting room at each site to accomodate
+\item There is a single waiting room at each site to accommodate
       patients who have arrived but have not yet started their scans.
 \item Each site has a opening time and a closing time for each day.
       The site is supposed to only operate only inside this time window.
@@ -105,26 +105,25 @@ unsuccessful diversions.
 
 The model needs the following inputs:
 \begin{itemize}
-\item The schedule at the beginning of the day. This includes
-      appointments across all sites.
-\item The set of patients who are volunteers.
-\item The distribution of arrival time per appointment.
-\item The distribution of preparation time per appointment.
-\item The distribution of scan duration per appointment.
-\item The set of SDAOPs and their arrival time.
-\item Cancellations.
+\item the schedule at the beginning of the day, including
+      appointments across all sites;
+\item the set of patients who are volunteers;
+\item the distribution of arrival time per appointment;
+\item the distribution of preparation time per appointment;
+\item the distribution of scan duration per appointment;
+\item the set of SDAOPs and their arrival time;
+\item cancellations.
 \end{itemize}
-Here we describe a ideal scenario where we know distributional
+Here we describe a ideal scenario where we know the distributional
 information for each appointment. In practice, we need to
 use historical data to fit these distributions and we cannot
 hope to reach the granularity of per appointment level.
-For scan duration, we fit one distribution per type of scan.
+For scan duration, we fit one distribution for each type of scan.
 For arrival time and preparation time, we fit one distribution
-for each for the whole population. For sure, this can be further
-improved with more effort.
+for the whole population. 
 
-We are making (admitted large) assumptions on these sources of randomness.
-For example, when a site is running behind schedule, staff
+We are making (admittedly substantial) assumptions on these sources of randomness.
+For example, when a site is running behind schedule, the staff
 may work faster. In fact, scan duration is dependent on the current status
 of a site (in terms of the congestion being observed).
 There are many factors in reality and we cannot
@@ -133,12 +132,12 @@ that is qualitatively similar enough to reality, and show that our
 results are robust under a range of parameters influencing the
 behaviors of the system.
 
-These model inputs are used to simulate operation for one day.
-We don't allow our diversion policy to peek into future, so
-the policy is not aware of SDAOPs and cancellation until they
-happens.
+These model inputs are used to simulate daily operations, and
+some of them are not available to our diversion policy.
+For example, our policy does not know about SDAOPs and cancellation
+until they happen.
 
-We will discuss how to fit these inputs in the section for
+We will discuss how to fit these inputs in the section of
 numerical experiments.
 
 \subsection{Metric}
