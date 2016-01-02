@@ -1,16 +1,17 @@
 \subsection{7 Sites Results}
 
-The 3 sites cases, although is based on reality, already contains
-some pooling effect initially due to some site has more than one
-machines. We'd like to isolate out the impact of just diversions. Thus
-it makes sense to conduct experiment on the case where instead of
-having some big sites and small sites, we have 7 small sites, each
-with one machine. This system has worse performance to begin with
-because no pooling effect is present initially. Let's look at the
-impact of diversions. Note all sites are totally homogeneous now:
-they have same number of machines, same amount of load and
-same open time. As a result, we don't need to look at system
-performance at per site level.
+The 3 site case, although based on a real system currently functioning,
+already contains a pooling effect due to the fact that some sites have more than one
+machines. We would like to isolate the impact of just diversions in creating
+the pooling effect. Thus,
+it makes sense to conduct experiments on the case where instead of
+having some big sites and some small sites, we have 7 small sites, each
+with one machine. This system has worse performance initially
+because no pooling effect is present. We shall examine the
+impact of diversions. Note that all sites are totally homogeneous now:
+they have the same number of machines, the same amount of load and
+the same opening time. As a result, we do not need to look at system
+performance at a per site level.
 
 \begin{figure}[htp]
 \centering
@@ -20,11 +21,10 @@ with 7 sites, each with one machine.}
 \label{fig:7sites_all}
 \end{figure}
 
-Figure \ref{fig:7sites_all} shows that compared to 3 sites case,
-diversions have more impact on this system. This time, we have
+Figure \ref{fig:7sites_all} shows that when compared to 3 sites case,
+diversions have a greater impact on this system. In this case, we have
 significant improvement even on mean waiting time. This is exactly
-because diversions bring pooling effect which is intially not
-presented.
+because diversions provide the only source of a pooling effect.
 
 \begin{figure}[htp]
 \centering
@@ -34,11 +34,8 @@ presented.
 \end{figure}
 
 From Figure \ref{fig:7sites_all_diversion}, we see that we may potentially
-divert 6\% patients if everyone is volunteer. This is a lot more compared
-with 3 sites case. This shows that there are a lot more
+divert 6\% patients if everyone volunteers. This is substantially more when compared
+with 3 sites case. This shows that there are many more
 beneficial diversion opportunities when there is no pooling initially. Also, for
-diverted patients, each of them also enjoys more waiting time reduction
-compared to 3 sites case.
-
-Overall, the experiments for the 7 site confirms that greater benefit can
-be achieved in the system with many small sites.
+diverted patients, each of them enjoys a greater reduction in waiting time
+when compared to the 3 sites case.

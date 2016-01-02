@@ -65,45 +65,45 @@ improved objective value and less waiting time for a diverted
 patient with sufficiently high probability.
 
 It is impossible to compute $\mathbb{P}[C(\delta') < C(\delta)]$ and
-$\mathbb{P}[P(\delta') < P(\delta)]$ precisely. So we need to approximate
+$\mathbb{P}[P(\delta') < P(\delta)]$ precisely. So, we need to approximate
 them, we decide to use simulation to estimate these probabilities.
 
-We will generate a random vector $\xi$ includes
+We will generate a random vector $\xi$ that includes
 \begin{itemize}
-\item The scan durations of all patients.
-\item The arrival time of all patients.
-\item The preparation time of all patients.
+\item the scan durations of all patients;
+\item the arrival time of all patients; and
+\item the preparation time of all patients.
 \end{itemize}
-We sample all these from the corresponding empirical distribution,
+We sample all of these from the corresponding empirical distribution,
 possibly conditioning on information in hand at current time
-(for example, for in-progress patient, we know how long the patient
+(for example, for an in-progress patient, we know how long the patient
 has been under scan). We omit cancellation and SDAOP since
-they're low probability event and hard to predict.
+they are low probability events and hard to predict.
 
 With $\xi$, we can simulate the system with/without diversion $D$
-and assess the outcome. To make estimation more accurate, we will
-in total general $k$ random vectors $\xi_1, \ldots, \xi_k$, each
+and assess the outcome. To make the estimation more accurate, we will,
+in total, generate $k$ random vectors $\xi_1, \ldots, \xi_k$, each
 corresponding to one scenario. And let $\delta(\xi_1), \ldots,
 \delta(\xi_k)$ be outcomes without $D$ and $\delta'(\xi_1), \ldots,
 \delta'(\xi_k)$ be outcomes with $D$. We use the fraction of
 scenarios where $C(\delta'(\xi_i)) < C(\delta'(\xi_i))$ as
-estimated objective improvement probability $\tilde p_c$. We use the fraction
-of scenarios where $P(\delta'(\xi_i)) < P(\delta'(\xi_i))$ as
-estimated less waiting (for diverted patient) probability $\tilde p_p$.
+the estimated objective improvement probability $\tilde p_c$. We use the fraction
+of scenarios where $P(\delta'(\xi_i)) < P(\delta'(\xi_i))$ as the
+estimated less waiting time (for a diverted patient) probability $\tilde p_p$.
 If $\tilde p_c \ge \theta_c$ and $\tilde p_p \ge \theta_p$, we say
-this diversion is \textit{approximately valid}. Here we are
+this diversion is \textit{approximately valid}. Here, we are
 comparing pairs of outcomes coupled with same random vectors.
 This technique is called Common Random Numbers and can help
 reduce variance when comparing outcomes.
 
-If there is no \textit{approximately valid diversions}, we will
+If there is no \textit{approximately valid diversion}, we will
 keep the patient at his/her current site. Otherwise, we will
 choose the diversion with highest estimated objective improvement
 probability $\tilde p_c$.
 
-We're basically greedily diverting patients. This is obviously
+This approach basically greedily diverts patients. This is obviously
 suboptimal. However, modeling this decision problem as Stochastic
 Dynamic Programming leads to a formulation that is very hard to
 solve. The simple approach we take is easy to compute and easy
-to interpret. It's also extensible that we can incorporate other
+to interpret. It is also extensible that we can incorporate other
 desirable property in choosing diversions.

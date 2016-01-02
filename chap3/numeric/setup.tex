@@ -3,20 +3,20 @@
 \paragraph{Scenarios}
 
 In this section, we describe the two scenarios that we experiment with,
-the historial data we have and choice of parameters of our policy.
+the historial data we have, and the choice of parameters for our policy.
 
 The first scenario is based on the real-life case of New York Presbyterian
-hospital (NYP). NYP hospital has three different sites for outpatients MRI
-across Manhattan. They are named after their address: York Ave, 55th St and
-West 84th St. See Figure \ref{fig:site}. The two sites on each side is very
-close to each other, it's only 15min walking distance. The one on west side
-is a bit further, it's 15min driving distance without traffic.
-The patients usually arrive at their site 30min before their appointment
-time to prepare so that they can be ready by the appointment time.
-Thus, if we call patient 1 hour before their appointment times, this
-would mean they have 30min to react to the change. This could be reasonable
-given the short distance between the sites. We also experiment with 90min
-lead time, which gives patients 60min to react.
+(NYP) Hospital. NYP Hospital has three different sites for outpatients MRI
+across Manhattan. They are named after their addresses: York Ave., 55th St. and
+West 84th St. (See Figure \ref{fig:site}). The first two sites are very
+close to each other; they're only a 15 minute walking distance apart. The one on west side
+is a bit further; it is 15 minute driving distance without traffic from the other two.
+A patient usually arrives at the site 30 minutes before his appointment
+time to prepare, so that he can be ready by his appointment time.
+Thus, if we call the patient 1 hour before his appointment time, he
+would have 30 minutes to react to the change. This might be reasonable
+given the short distance between the three sites. We also experiment with 90 minutes
+lead time, which gives the patient 60 minutes to react.
 
 \begin{figure}
 \centering
@@ -27,28 +27,28 @@ east side and one is on west side.}
 \label{fig:site}
 \end{figure}
 
-These sites have different number of MRI machines. West 84th has
-only one machine. 55th St has two machines. York Ave has four machines.
-Since they have different processing capacity, different number of
-appointments are scheduled for. With 4 machines
-at York Ave, itself has quite a bit resourcing pooling ability, making
+These sites have different numbers of MRI machines. West 84th has
+only one machine. 55th St. has two machines. York Ave. has four machines.
+Since they have different processing capacity, a different number of
+appointments are scheduled for each. With 4 machines at York Ave, there is a
+substantial amount of resource pooling ability present, making
 patients there in general wait less.
 
-The second scenario we consider is a system with 7 sites each has one
+The second scenario we consider is a system with 7 sites in which each has one
 MRI machine. The reason is that we want to explore the impact of
 diversion on a set of small cooperating imaging facilities. Also,
-in this case all sites are homogeneous so we can isolate out
-the impact of resource pooling without worrying about unbalance in
+in this case, all sites are homogeneous, so we can isolate
+the impact of resource pooling without worrying about imbalance between
 processing capacities across sites.
 
 \paragraph{Data}
-We have three years data of historical MRI scans. For each of these
-scans, we have the type of scan, its appointment time, when patient
-arrived, when scan began and when scan finished. The data we have
-isn't perfect, but we can fit reasonable model inputs from it.
+We have three years data of historical MRI scans at NYP Hospital.
+For each of these scans, we have the type of scan, its appointment time, when
+the patient arrived, when the scan began and when the scan finished. The data we have
+is not perfect, but we are able to fit reasonable model inputs based on it.
 
 \begin{itemize}
-\item Initial schedule for the day. We'd like our schedule to have
+\item Initial schedule for the day. We wish our schedule to have
   same distribution of scans of each type with the historical one.
   We also know, for each type of scan, the slot size allocated.
   Combining these, we generate synthetic schedules sharing similar
@@ -59,12 +59,12 @@ isn't perfect, but we can fit reasonable model inputs from it.
   given different level of flexbility from patients.
 \item Patient arrival time. We fit one empirical distribution on
   the difference between patients' arrival time and appointment time.
-\item Preparation time. We do not actually have timestamp data for this.
-  We overcome this by looking at the first patients processed each day,
+\item Preparation time. We do not actually have the timestamp data for this.
+  We overcome this difficulty by looking at the first patient processed each day,
   and use the difference between their arrival time and scan begin time
-  as preparation time. Since the first patients don't need to stay in
-  waiting room, so it's reasonable to assume all time between arrival
-  and scan begin are used for preparation. We fit one empirical distribution
+  as the preparation time. Since the first patient does not need to stay in
+  waiting room, it is reasonable to assume that all of the time between the arrival
+  and scan begin time is used for preparation. We fit one empirical distribution
   based on this.
 \item Scan duration. For each type of scan, we fit an empirical
   scan duration from historical data.
@@ -74,19 +74,21 @@ isn't perfect, but we can fit reasonable model inputs from it.
   Then for each appointment, we independently make it a cancellation with
   the historical probability.
 \end{itemize}
-Ideally, we would like to test our policy by replaying history with real
-scan duration, arrival time for each historical appointment. However,
-the data we obtain is incomplete. There are some critical fields missing
-and we cannot exactly reconstruct history. Also, there are often
-error on timestamps that can greatly impact how the daily schedule looks like.
-To prevent these data issues to interfere with our experiments, we choose
-to experiment with synthetic schedules.
+Ideally, we would like to test our policy by replaying history with the real
+scan duration and actual arrival time for each historical appointment. However,
+the data we obtained is incomplete. There are some critical fields missing
+and we cannot exactly reconstruct history. Futhermore, there are occasional
+errors on timestamps that can greatly impact how the daily schedule appears.
+To prevent these data issues from interfering with our experiments, we chose
+to experiment with our constructed synthetic schedules.
 
-One can improve the inputs by predicting the scan duration and
-arrival time better using more information. For example, the patients'
-health condition, diagnosis, home address and other information can be
-helpful to make better prediction. However, we don't access to those
-sensitive health information.
+One might improve the model inputs by predicting the scan duration and
+arrival time better using more information. For example, the patient's
+health condition, diagnosis, home address and other information might be
+helpful to make a better prediction. However, we do not have access to these
+sensitive personal data. But we believe that if we could use machine learning
+techniques to make better predictions of patient's arrival time and scan duration,
+our diversion policy would perform better.
 
 \paragraph{Parameters}
 
@@ -95,9 +97,9 @@ and for our optimization procedure. We describe our choice of them here.
 
 \begin{itemize}
   \item Volunteer probability. We vary the percent of patients who are willing
-    to be volunteer. This will allow us to see the effect of our policy
+    to be volunteers. This will allow us to see the effect of our policy
     with varying levels of flexibility.
-  \item Lead time. We experiment with both 60min and 90min lead time.
+  \item Lead time. We experiment with both a 60 minute and a 90 minute lead time.
   \item Overtime weight $\lambda = 10$, this reflects the fact overtime is quite valuable.
   \item $\theta_c = 0.7, \theta_p = 0.7$. We choose the confidence threshold on objective value
     and waiting time of diverted patient to be neither too aggressive nor too conservative.
