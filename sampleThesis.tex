@@ -66,11 +66,34 @@
 \makecopyright
 
 \begin{abstract}
-We include three works on resource allocation in this thesis. Good pricing helps the system to allocate resource efficently. However, the computational efforts to obtain good prices aren't always easy. In airline network revenue setting, high-quality bid prices can be obtained via approximate dynamic programming approach. However, this leads to an expoential-size linear programming which is slow to solve. We show that this hugh linear programming is actually equivalent to a much smaller linear programming with appealing interpretation by exploiting the minimum-cost network flow structure of this problem. Computational experiments indicate that our results can speed up the computation time for the approximate linear programming approach by a factor ranging between 13 and 135.
+We include three works on resource allocation in this thesis. Proper pricing
+helps the system to allocate resource efficiently. However, the computational
+efforts to obtain such prices are not always easy. In airline network revenue
+setting, high-quality bid prices can be obtained via approximate dynamic
+programming approach. However, this leads to an exponential-size linear programming
+which is slow to solve. We show that this large linear programming is actually
+equivalent to a compact linear programming with appealing interpretation
+by exploiting the minimum-cost network flow structure of this problem.
+Computational experiments indicate that our results can speed up the computation
+for the approximate linear programming approach by a factor ranging between 13 and 135.
 
-In the second chapter, we study how to better serve clients by allocating resources to open facilities with right location and type. We extend the classical \textit{facility location} problem by associating \textit{types} with facilities and clients. The types define a partial ordering and a client can only be served by facilities of equal or higher type. We show how to obtain approximation algorithms for two interesting special cases. We also study the problem embedding in time, the lot-sizing variant. We give optimality algorithm for the variant.
+In the second chapter, we study how to better serve clients by allocating resources
+to open facilities with right location and type. We extend the classical \textit{facility location}
+problem by associating \textit{types} with the facilities and the clients. The types define a partial
+ordering and a client can only be served by facilities of equal or higher type. We show
+how to obtain approximation algorithms for two interesting special cases.
+We also study the problem embedded in time, which is known as the lot-sizing variant.
+We give algorithm that finds optimal solution for the variant.
 
-In the third chapter, we study allocating medical resource in imaging facilities. The most common method to allocate imaging machine time is by appointment system. However, despite the best efforts by medical staff, the inherent randomness and unexpected disruptions can bring considerate congestion to the system. In the multi-site setting, we seek to complement appointment scheduling with real-time resource sharing. By monitoring system status and making prediction into future, we can identify potential congestion and divert patients accordingly. We provide simulation results showing this method improves patient waiting time and facilities overtime, which are two important quality measurement.
+In the third chapter, we study how to allocate medical resource in imaging facilities.
+The most common method to allocate imaging machine time is by a appointment system.
+However, despite the best efforts by medical staff, the inherently stochastic nature of the duration of various procedures and
+unexpected disruptions can bring considerate congestion to the system. In the multi-site setting,
+we seek to complement appointment scheduling with real-time resource sharing.
+By monitoring system status and making prediction of future, we can identify
+potential congestions and divert patients accordingly to prevent these congestions
+from happening. We provide simulation results showing that this method improves
+patient waiting time and facilities overtime, which are two important quality measurements.
 \end{abstract}
 
 \begin{biosketch}
@@ -82,7 +105,11 @@ To my parents and my wife.
 \end{dedication}
 
 \begin{acknowledgements}
-A big thanks to David for being such a kind and patient advisor. Thanks all friends I met here at Ithaca for sharing precious time with me. Also thank the passing time for giving me refreshed understanding of myself.
+A big thanks to David and Shane for being such kind and patient advisors.
+Also, I would like to thank all committee members for providing
+invaluable feedbacks on this thesis.
+Thanks all friends I met here at Ithaca for sharing precious time with me.
+Also thank the passing time for giving me refreshed understanding of myself.
 \end{acknowledgements}
 
 \contentspage
