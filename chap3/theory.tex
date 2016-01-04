@@ -7,16 +7,16 @@ the lead time. Here we give a proof for the following similar but simplified set
 \item There are $k$ sites, each with one machine.
 \item There are $n$ patients. Patient $i$ has appointment time $a_i$
       and will arrive punctually.
-\item The service duration $d_i$ of patient $i$ follows exponential
+\item The service duration $d_i$ of patient $i$ follows an exponential
       distribution, possibly with different means.
 \end{itemize}
-For technical reason, we will first slightly modify our instance:
+For a technical reason, we will first slightly modify our instance:
 we will use a new appointment time $\tilde a_i = a_i + \delta u_i$,
 where $\delta$ is a small constant and each $u_i$ is a uniform
 random variable on $[-1,1]$. Now, all of the appointment times
 are different almost surely.
 
-The system will follow join-shortest-queue policy with lead time $l$.
+The system will follow the join-shortest-queue policy with lead time $l$.
 Consider the decision epoch at time $\tilde a_i - l$, when the
 system is deciding which site to assign patient $i$.
 Let $P_{ij}(l)$ be the set of patients that are assigned to site $j$,
@@ -28,7 +28,7 @@ will assign patient $i$ to the site with earliest $C_{ij}(l)$.
 If there is a tie, the patient will be assigned to the site with
 lower number.
 
-Let sample path $\omega$ includes all of the randomness of $u_i$ and $d_i$,
+Let sample path $\omega$ include all of the randomness of $u_i$ and $d_i$,
 and let $X(l)$ be the random total waiting time of all of the patients.
 We will prove the following theorem.
 
@@ -41,13 +41,13 @@ We want to prove $\E[X(l+\epsilon)] \rightarrow \E[X(l)]$ when
 $\epsilon \rightarrow 0$.
 Number all of the patients from $1$ to $n$ in non-decreasing order of $\tilde a_i$.
 Note that the waiting time for any patient $i$ can be bounded
-by the sum of scan duration of previous patients $\sum_{i' < i} d_{i'}$.
+by the sum of scan durations of previous patients $\sum_{i' < i} d_{i'}$.
 This implies that the total waiting time $X(l+\epsilon)$
 can be bounded by $\sum_{i'=1}^n nd_{i'}$, which is
 a integrable random variable. Thus, if we can prove
 $X(l+\epsilon) \rightarrow X(l)$ almost surely
 as $\epsilon \rightarrow 0$, the theorem will follow from
-Dominated Convergence Theorem.
+the Dominated Convergence Theorem.
 
 Now fix a sample path $\omega$ and the lead time $l$.
 Consider the decision epoch for patient $i$.
@@ -60,7 +60,7 @@ is finished in time, and let $g_2$ be the time between them.
 Almost surely, $g_2 > 0$.
 
 We claim that $X(l+\epsilon)=X(l)$, if $|\epsilon| < \min\{g_1, g_2\}$.
-Actually, we will prove the two systems will evolve exactly the same.
+Actually, we will prove that the two systems will evolve in exactly the same way.
 Suppose that on the contrary, the two systems diverge when
 making decisions for patient $i$. Since $|\epsilon| < g_2$,
 there is no scan completed between $\tilde a_i -l$ and
