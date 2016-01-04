@@ -21,7 +21,8 @@ Consider the decision epoch at time $\tilde a_i - l$, when the
 system is deciding which site to assign patient $i$.
 Let $P_{ij}(l)$ be the set of patients that are assigned to site $j$,
 but have not completed their scans.
-The system will calculate, for each site $j$, the time $C_{ij}(l)$ to finish patients $P_{ij}(l)$,
+The system will calculate, for each site $j$, the time $C_{ij}(l)$
+(at least current time $\tilde a_i - l$) to finish patients $P_{ij}(l)$,
 assuming that the scan duration will take expected value. The system
 will assign patient $i$ to the site with earliest $C_{ij}(l)$.
 If there is a tie, the patient will be assigned to the site with
