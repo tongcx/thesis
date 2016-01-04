@@ -1,87 +1,74 @@
 \section{Continuity of system performance with respect to lead time}
 
 In the experiment, we considered two lead times. It is an interesting question
-to consider whether the system's performance change continuously with respect to
-lead time. Here we first give a proof on a simplified setting.
-
-Consider the following setting.
+to ask whether the system's performance changes continuously with respect to
+the lead time. Here we give a proof for the following similar but simplified setting:
 \begin{itemize}
 \item There are $k$ sites, each with one machine.
-\item There are $n$ patients, numbered $1,\ldots,n$. Patient $i$
-      has appointment time $a_i$ and the appointment times are
-      in non-decreasing order. Patients will arrive almostly
-      punctually
-      according to their appointment times.
+\item There are $n$ patients. Patient $i$ has appointment time $a_i$
+      and will arrive punctually.
 \item The service duration $d_i$ of patient $i$ follows exponential
       distribution $Exp(\mu_i)$ with mean $\frac{1}{\mu_i}$.
 \end{itemize}
+For technical reason, we will first make a small change to our instance:
+we will use a new appointment time $\tilde a_i = a_i + \delta u_i$,
+where $\delta$ is a small constant and each $u_i$ is a uniform
+random variable on $[-1,1]$. Now, all of the appointment times
+are different almost surely.
+
 The system will follow join-shortest-queue policy with lead time $l$.
-Let $P_j$, at any given time, be the set of patients who are assigned
-to site $j$ but hasn't completed their services.
-At time $a_i-l$, we will try to assign patient $i$ (for patients
-with the same appointment time, we will assign patient with lower
-number first). The system will look at each site $j$ and its
-expected total process time
-\[  T_j = \sum_{i' \in P_j} \frac{1}{\mu_{i'}}  \]
-and assign patient $i$ to the site with lowest $T_j$
+For each patient $i$, there is a decision epoch at time $\tilde a_i - l$.
+Let $P_{ij}(l)$ be the set of patients that are assigned to site $j$,
+but have not completed their scans.
+The system will calculate, for each site $j$, the time $C_{ij}(l)$ to finish patients $P_{ij}(l)$,
+assuming that the scans will take expected duration. The system
+will assign patient $i$ to the site with earliest $C_{ij}(l)$.
+If there is a tie, the patient will be assigned to the site with
+lower number.
 
-and the patients will arrive punctually according to their appointment times.
-Each patient has an exponentially distributed service distribution $d_i \tilde Exp(\mu_i)$.
-Let the lead time be $l$. Every patient is volunteer and we use a
-join-shortest-queue policy: $l$ time before the $a_i$, we will check which site
-will finish its current load earliest in expectation and then put the patient $i$ there.
+Let sample path $\omega$ includes all of the randomness of $u_i$ and $d_i$,
+and let $X(l)$ be the random total waiting time of all of the patients.
+We will prove the following theorem.
 
-We will prove that the expected total waiting time is continuous with
-respect to lead time $l$.
+\begin{thm}
+  $\E[X(l)]$ is continuous with respect to lead time $l \ge 0$.
+\end{thm}
 
 \begin{proof}
-Fix the set of patients and their appointments $\{a_i\}$, parameters of their
-service distributions $\{\mu_i\}$. Let $X(l)$ be the random total waiting time when we
-use lead time $l$. The randomness of the system comes from the service
-durations. We want to prove that $E[X(l)]$ is continuous w.r.t. $l$.
+Number all of the patients from $1$ to $n$ in non-decreasing order of $\tilde a_i$.
+Note that the waiting time for any patient $i$ can be bounded
+by the sum of scan duration of previous patients $\sum_{i' < i} d_{i'}$.
+This implies that the total waiting time $X(l+\epsilon)$
+can be bounded by $\sum_{i'=1}^n nd_{i'}$, which is
+a integrable random variable. Thus, if we can prove
+$X(l+\epsilon) \rightarrow X(l)$ almost surely
+as $\epsilon \rightarrow 0$, the theorem will follow from
+Dominated Convergence Theorem.
 
-Let $W_i(l)$ is the random waiting time for patient $i$ when lead
-time is $l$. Since $X(l)$ is just sum of $W_i(l)$, we only need to prove
-$E[W_i(l)]$ is continuous w.r.t. $l$.
+Now fix a sample path $\omega$. Consider the decision epoch for patient $i$.
+Unless there are two sites with no patients assigned, there will almost surely
+be a non-zero gap between the earliest completion time and the rest.
+Let $g_1>0$ be the smallest such non-zero gap.
 
-Now consider two lead times $l$ and $l+\epsilon$ ($\epsilon > 0$).
-For any patient $i$ with appointment time $a_p$, we consider the
-time window $[a_i - l - \epsilon, a_i - l]$. We call all these
-windows \textit{critical windows}. Let $A_i$ be the event that
-there are no patients got finished during \textit{critical window} of patient $i$.
-Let $A = \cup_i A_i$ and suppose none of $A_i$ happens.
-Consider the moments when we make decision for patient $i$ in two systems
-at time $a_i-l$ and $a_i - l - \epsilon$. We can inductively argue
-that the two systems see exactly the same set of unfinished patients
-(including in-progress and waiting patients and patients who are already
-assigned but haven't arrived yet) at each site. Because exponential
-distribution is memory-less, the two system will calculate exactly
-the same expected finish time for each site, and thus, assign patient $i$
-to the same site. This shows that the end result will be the same
-if there is no patient completion in \textit{critical windows}.
+Consider the closest pair of decision epoch and moment when a scan
+is finished in time, and let $g_2$ be the time between them.
+Almost surely, $g_2 > 0$. We claim $X(l+\epsilon)=X(l)$,
+if $|\epsilon| < \min\{g_1, g_2\}$,
 
-Let $\mu_{max}$ be the largest $\mu_i$. We can bound the probability
-of $A_i$ by,
-\[  k \mu_{max} \epsilon  \]
-since there are at most $k$ patients being processed in parallel at any time
-and the maximum rate of patient completion is $\mu_{max}$. By union bound,
-we can bound the probability of $A$ by $n k \mu_{max} \epsilon$.
+Actually, we will prove the two systems will evolve exactly the same.
+Suppose that on the contrary, the two systems diverge when
+making decisions for patient $i$. Since $|\epsilon| < g_2$,
+there is no scan completion between $\tilde a_i -l$ and
+$\tilde a_i-\epsilon$, thus $P_{ij}(l) = P_{ij}(l+\epsilon)$ for any site $j$,
+or the two systems see the same set of assigned patients.
+The two system should both choose among the sites with no assigned patients
+the one with lowest number, should such site exist.
+Otherwise, because $|\epsilon| < g_1$, the site with lowest $C_{ij}(l)$
+still has lowest $C_{ij}(l+\epsilon)$. The two systems still
+make the same decision.
 
-Now, we can prove $E[W_i(l)]$ is right-continuous
-\begin{align*}
-E[W_i(l+\epsilon)] - E[W_i(l)] &= E[(W_i(l+\epsilon) - W_i(l))I(A)] +
-    E[(W_i(l+\epsilon) - W_i(l))(1 - I(A))] \\
- &= E[(W_i(l+\epsilon) - W_i(l))I(A)] \\
- &\le E[(|W_i(l+\epsilon)| + |W_i(l)|)I(A)]
-\end{align*}
-Ordering all patients by their appointment time, we can bound the
-waiting time of patient $i$ by the sum of processing time of all
-patients before him/her.
-\[ W_i \le \sum_{j=1}^{i-1} d_j \]
-This is true for any lead time. So
-\[  E[W_i(l+\epsilon)] - E[W_i(l)] \le E[2(\sum_{j=1}^{i-1} d_j) I(A)] \le 2(i-1)\mu_{max} P[A]  \]
-When $\epsilon \rightarrow 0^+$, we see that $P[A] \rightarrow 0$ and
-thus $E[W_i(l)]$ is right continuous w.r.t. $l$. With similar argument,
-we can show it's also left-continuous. This conclude our proof that
-$E[X(l)]$ is continuous w.r.t. $l$.
+Thus, we have proved that the two system evolve
+exactly the same when $\epsilon$ is sufficiently small.
+This implies, $X(l+\epsilon) \rightarrow X(l)$ almost surely
+when $\epsilon \rightarrow 0$. This completes our proof.
 \end{proof}
