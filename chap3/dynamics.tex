@@ -47,7 +47,7 @@ with one patient and has the following states:
 \item Slot size
 \item Appointment status. This could be
   \begin{itemize}
-  \item "scheduled but hasn't shown up"
+  \item "scheduled but has not shown up"
   \item "arrived and preparing for scan"
   \item "ready for scan"
   \item "under scan"
@@ -89,16 +89,16 @@ The following a complete enumeration of all events that we consider:
 \item Diversion. This happens when we successfully divert a patient
       to another site. 
 \end{itemize}
-In numerical experiments, we shall assume there are no "no-show".
+In numerical experiments, we shall assume there are no "no-shows".
 In practice, a no-show is quite rare since it is not easy to get an appointment,
-and we believe this implication is appropriate. In practice, we can deal
+and we believe this assumption is appropriate. In practice, we can deal
 with a no-show by changing the appointment's status to "cancelled"
-when the patient doesn't arrive within a certain threshold of
+when the patient does not arrive within a certain threshold of
 the appointment time. If the patient does show up later, we will
 change the status to "arrived and preparing for scan".
 
 In numerical experiments, we also assume all diversions are successful.
-The justification for this is that will experiment with different fraction of volunteers
+The justification for this is that we will experiment with different fractions of volunteers
 and a low fraction of volunteers can be partially interpreted as
 unsuccessful diversions.
 
@@ -112,13 +112,13 @@ The model needs the following inputs:
 \item the distribution of arrival time per appointment;
 \item the distribution of preparation time per appointment;
 \item the distribution of scan duration per appointment;
-\item the set of SDAOPs and their arrival time;
+\item the set of SDAOPs and their arrival times;
 \item cancellations.
 \end{itemize}
-Here we describe a ideal scenario where we know the distributional
+Here we describe an ideal scenario where we know the distributional
 information for each appointment. In practice, we need to
 use historical data to fit these distributions and we cannot
-hope to reach the granularity of per appointment level.
+hope to reach the granularity of the per appointment level.
 For scan duration, we fit one distribution for each type of scan.
 For arrival time and preparation time, we fit one distribution
 for the whole population. 
@@ -131,14 +131,14 @@ There are many factors in reality and we cannot
 hope to model all of them. So we focus on constructing a model
 that is qualitatively similar enough to reality, and show that our
 results are robust under a range of parameters influencing the
-behaviors of the system.
+behavior of the system.
 
 These model inputs are used to simulate daily operations, and
 some of them are not available to our diversion policy.
 For example, our policy does not know about SDAOPs and cancellation
 until they happen.
 
-We will discuss how to fit these inputs in the section of
+We will discuss how to fit these inputs in the section on
 numerical experiments.
 
 \subsection{Metric}

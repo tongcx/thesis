@@ -34,10 +34,10 @@ We say that client $j$ {\it contributes} to facility $i$ if $w_{ij} > 0$.
 We say that client $j$ is {\it frozen by} facility $i$ if we mark $j$ inactive during Event 1 or Event 3 corresponding to facility $i$.
 \end{defn}
 
-For any tentatively open facility $i$, if we take all budgets of its contributing clients, it's enough to cover the opening cost $f_i$ plus their assignment cost to $i$. However, the reason we cannot simply open all tentatively open facilities is we may spend the budget of some client multiple times if it contributes to several tentatively open facilities, making it hard to bound our cost against the dual solution. This motivates us to perform the Pruning Phase open facilities more selectively.
+For any tentatively open facility $i$, if we take all budgets of its contributing clients, it is enough to cover the opening cost $f_i$ plus their assignment cost to $i$. However, the reason we cannot simply open all tentatively open facilities is we may spend the budget of some client multiple times if it contributes to several tentatively open facilities, making it hard to bound our cost against the dual solution. This motivates us to perform the Pruning Phase open facilities more selectively.
 
 \textbf{Pruning phase}
-In this phase, we maintain a set $D$ which we denote as \textit{center clients}. We consider each type $t$ in our tree $\mathcal{T}$ one by one with top-down ordering, each corresponding to one pass. During the pass for type $t$, we look at each tentatively open facility $i$ of type $t$. We permanently open facility $i$ and pay its opening cost $f_i$ if all contributing clients $j$ are not marked centers yet ($j \not \in D$). Then we mark all contributing clients of facility $i$ to be centers, adding them to $D$. On the other hand, if there is one contributing client $j \in D$, then we don't open facility $i$ and move to the next facility.
+In this phase, we maintain a set $D$ which we denote as \textit{center clients}. We consider each type $t$ in our tree $\mathcal{T}$ one by one with top-down ordering, each corresponding to one pass. During the pass for type $t$, we look at each tentatively open facility $i$ of type $t$. We permanently open facility $i$ and pay its opening cost $f_i$ if all contributing clients $j$ are not marked centers yet ($j \not \in D$). Then we mark all contributing clients of facility $i$ to be centers, adding them to $D$. On the other hand, if there is one contributing client $j \in D$, then we do not open facility $i$ and move to the next facility.
 
 %In the end, 
 Finally, we assign each client to the closest open facility $i$ with $i \in \mathcal{F}(j)$.
@@ -88,7 +88,7 @@ Thus, we know $\ell$ is capable of serving $j$.
 
 Finally, we need to bound the cost of assigning $j$ to $l$. We know
 \[  c_{j\ell} \le c_{ij} + c_{ik} + c_{\ell k} \le v_j + v_k + v_k = v_j + 2v_k .   \]
-Let's consider the relationship between $v_j$ and $v_k$.
+Consider the relationship between $v_j$ and $v_k$.
 We know $k$ contributes to $i$, and so $k$ must become inactive at the same or earlier than when we tentatively open $i$ during Dual Ascent phase.
 Otherwise, when we tentatively open $i$, we will freeze $j$ at the same time.
 On the other hand, since $i$ froze $j$, we know $j$ becomes inactive at the same time or later than we tentatively open $i$.
@@ -124,7 +124,7 @@ where we rescale each facility opening cost from $f_i$ to $f_i/\alpha$.
 Let $v^\alpha$ be the dual budget produced,and let $D^\alpha$ be the set of center clients.
 \item Solve the linear program for the original instance and get an optimal fractional solution $x^*, y^*$.
 For each facility $i \in \mathcal{F}$, independently open it with probability $\min\{1, \beta y^*_i\}$
-if it's not opened by the primal-dual algorithm.
+if it is not opened by the primal-dual algorithm.
 \item Assign each client to its closest open facility $i$ in $\mathcal{F}(j)$.
 \end{enumerate}
 
@@ -135,7 +135,7 @@ Since the primal-dual algorithm will always produce a feasible solution, we only
 Let $C(j)$ be the random assignment cost of client $j$,
 also let $C^*(j) = \sum_{i \in \mathcal{F}(j)} x_{ij}^* c_{ij}$ be its assignment cost in the optimal fractional solution.
 
-First let's analyze the assignment cost for non-center clients $\bar D^\alpha$.
+First, we analyze the assignment cost for non-center clients $\bar D^\alpha$.
 
 \begin{lem}
 \cite{chudak2003improved} Take any client $j \in \mathcal{D}$;
@@ -159,7 +159,7 @@ $E[C(j)] \le 3 v^\alpha_j \le (1-e^{-\beta}) C^*(j) + 3e^{-\beta}v^\alpha_j$.
 
 In the other case when $C^*_j \le 3 v^\alpha_j$, we assign $j$ to its closest facility in $\mathcal{F}(j)$
 opened during randomized rounding if $A_j$ happens, and we know $E[C(j) | A_j] \le C^*(j)$.
-However, if $A_j$ didn't happen, we can still use the facility in the primal-dual algorithm and pay at most $3v^\alpha_j$.
+However, if $A_j$ did not happen, we can still use the facility in the primal-dual algorithm and pay at most $3v^\alpha_j$.
 Thus,
 \begin{align*}
 E[C(j)] &= E[C(j)|A_j]P(A_j) + E[C(j)|\bar A_j]P(\bar A_j)  \\

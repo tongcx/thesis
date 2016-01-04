@@ -6,11 +6,11 @@ In this section, we describe the two scenarios that we experiment with,
 the historical data we have, and the choice of parameters for our policy.
 
 The first scenario is based on the real-life case of New York Presbyterian
-(NYP) Hospital. NYP Hospital has three different sites for outpatients MRI
+(NYP) Hospital. NYP Hospital has three different sites for outpatient MRI
 across Manhattan. They are named after their addresses: York Ave., 55th St. and
 West 84th St. (See Figure \ref{fig:site}). The first two sites are very
-close to each other; they're only a 15 minute walking distance apart. The one on west side
-is a bit further; it is 15 minute driving distance without traffic from the other two.
+close to each other; they are only a 15 minute walking distance apart. The one on the west side
+is a bit further; it is a 15 minute driving distance without traffic from the other two.
 A patient usually arrives at the site 30 minutes before his appointment
 time to prepare, so that he can be ready by his appointment time.
 Thus, if we call the patient 1 hour before his appointment time, he
@@ -23,7 +23,7 @@ lead time, which gives the patient 60 minutes to react.
 \includegraphics[scale=.6]{chap3/numeric/pic/site.pdf}
 \caption{Locations of MRI facilities of New York Presbyterian. There
 are three in total represented as blue bubbles. Two of them are on
-east side and one is on west side.}
+the east side and one is on the west side.}
 \label{fig:site}
 \end{figure}
 
@@ -42,9 +42,9 @@ the impact of resource pooling without worrying about imbalance between
 processing capacities across sites.
 
 \paragraph{Data}
-We have three years data of historical MRI scans at NYP Hospital.
+We have three years of historical data for MRI scans at NYP Hospital.
 For each of these scans, we have the type of scan, its appointment time, when
-the patient arrived, when the scan began and when the scan finished. The data we have
+the patient arrived, when the scan began, and when the scan finished. The data we have
 is not perfect, but we are able to fit reasonable model inputs based on it.
 
 \begin{itemize}
@@ -53,7 +53,7 @@ is not perfect, but we are able to fit reasonable model inputs based on it.
   number of historical scans of that type.
 \item The set of patients who are volunteers. We make the fraction
   of volunteers a parameter that varies across experiments.
-  This can help us understand the amount of impact diversions have
+  This can help us understand the amount of impact that diversions have
   with different levels of flexibility from patients.
 \item Patient arrival time. We fit one empirical distribution on
   the difference between patient's arrival time and appointment time.
@@ -67,7 +67,7 @@ is not perfect, but we are able to fit reasonable model inputs based on it.
 \item Scan duration. For each type of scan, we fit an empirical
   scan duration distribution from historical data.
 \item The set of SDAOPs and their arrival time. We calculate the rate of
-  SDAOPs in history and generate SDAOPs using Possion process.
+  SDAOPs in the history and generate SDAOPs using a Possion process.
 \item Cancellations. We calculate the historical probability of cancellation,
   and randomly select appointments that will be cancelled later.
 \end{itemize}

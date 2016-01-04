@@ -10,7 +10,7 @@ The algorithm is based on clustering and randomized rounding. The basic idea is 
 
 However, in our case, we need to deal with clients of different types. Naive clustering will leave us with some non-center client not being able to be served via cluster center. We need to do something more delicate.
 
-Now, let's describe the algorithms. First, solve the linear programming and get optimal solutions $x^*, y^*, w^*, v^*$. Assume here that $x^*_{ij}$ is either $y^*_i$ or $0$; we will need this later. This can be achieved by making several copies of facilities as in \cite{chudak2003improved}.
+Now, we describe the algorithms. First, solve the linear programming and get optimal solutions $x^*, y^*, w^*, v^*$. Assume here that $x^*_{ij}$ is either $y^*_i$ or $0$; we will need this later. This can be achieved by making several copies of facilities as in \cite{chudak2003improved}.
 
 \begin{defn}
 We say client $j$ {\it neighbors} facility $i$ if $x^*_{ij} > 0$.
@@ -25,13 +25,13 @@ be the fractional assignment cost of client $j$.
 for Any-will-do clients.
 
 Let $D_1$ be empty in the beginning. We consider client $j \in \mathcal{D}_P \cup \mathcal{D}_C$
-one by one in ascending order by $v^*_j + C^*(j)$. If $N(j)$ doesn't intersect $N(k)$
+one by one in ascending order by $v^*_j + C^*(j)$. If $N(j)$ does not intersect $N(k)$
 for any $k \in D_1$, we add $j$ to $D_1$. After we considered all clients in $\mathcal{D}_P \cup \mathcal{D}_C$,
 we will have our center-clients for the first clustering round.
 
 Let $D_2$ be empty. Then we consider client $j \in \mathcal{D}_A$ one by one
 in ascending order by $v^*_j + C^*(j)$.
-If $N(j)$ doesn't intersect with $N(k)$ for any $k \in D_2$, we add $j$ to $D_2$.
+If $N(j)$ does not intersect with $N(k)$ for any $k \in D_2$, we add $j$ to $D_2$.
 In the end, we will have our center-clients for the second clustering round.
 
 \begin{fact}
@@ -39,7 +39,7 @@ Let $D = D_1 \cup D_2$ be the set of center clients from both clustering rounds.
 For any $j \in D$, $y^*(N(j)) = 1$.
 \end{fact}
 
-\textbf{Rounding} We'd like to open exactly one facility for each cluster. However, since we have two sets of clusters and there could be some client $j \in D_1$ and $k \in D_2$ sharing the same facility in their neighborhoods, we cannot just randomly open one facility per cluster. If we use $z$ to denote our decision of which facility to open, meaning that $z_i = 1$ if we want to open facility $i$ and $z_i = 0$ otherwise. Then our requirement of opening exactly one facility in each cluster can be expressed as
+\textbf{Rounding} We would like to open exactly one facility for each cluster. However, since we have two sets of clusters and there could be some client $j \in D_1$ and $k \in D_2$ sharing the same facility in their neighborhoods, we cannot just randomly open one facility per cluster. If we use $z$ to denote our decision of which facility to open, meaning that $z_i = 1$ if we want to open facility $i$ and $z_i = 0$ otherwise. Then our requirement of opening exactly one facility in each cluster can be expressed as
 
 %\begin {align}\
 \[
@@ -74,11 +74,11 @@ because, at the time when we consider $j$, some center client $k$ has neighborho
 intersecting $j$'s neighborhood $N(j)$. We will assign $j$ to the same facility that $k$ was assigned to.
 
 Here we will show that this assignment is feasible.
-For anything-will-do clients, they are fine as long as they're served by some facility, so we don't need to worry about them.
+For anything-will-do clients, they are fine as long as they are served by some facility, so we do not need to worry about them.
 For a Pepsi-only client $j$, consider the center client $k$ it was assigned to.
 Client $k$ must be a Pepsi-only client. Because we separated the clustering phase of anything-will-do clients
 and other clients, so $k$ must be a Pepsi-only client or a Coke-only client.
-But it cannot be Coke-only, because otherwise $N(k)$ are all Coke facilities and it won't intersect with
+But it cannot be Coke-only, because otherwise $N(k)$ are all Coke facilities and it will not intersect with
 $N(j)$ which consists of only Pepsi facilities.
 As a result, we know $k$ is assigned to an open Pepsi facility which can also serve $j$.
 The same argument will work for a Coke-only client.
@@ -86,14 +86,14 @@ The same argument will work for a Coke-only client.
 
 \subsection{The analysis}
 
-Now let's analyze the total cost of our algorithm. Since we open facilities $z_v$ with distribution $\lambda_v$, 
+Now, we can analyze the total cost of our algorithm. Since we open facilities $z_v$ with distribution $\lambda_v$, 
 
 \begin{lem}
 The expected facility opening cost is exactly %facility opening cost
 $\sum_{i \in \mathcal{F}} f_i y^*_i$.
 \end{lem}
 
-Now let's consider assignment cost. For any center-client $j$,
+Now let us consider assignment cost. For any center-client $j$,
 we know that $i \in N(j)$ is opened with probability $y^*_i = x^*_{ij}$,
 so the expected assignment cost of $j$ is exactly $C^*(j)$. For a non-center client, we have this lemma.
 

@@ -1,16 +1,16 @@
-\section{Continuity with respect to lead time}
+\section{Continuity of system performance with respect to lead time}
 
-In the experiment, we considered two lead times. It's an interesting question
-to ask whether the system's performance change continuously with respect to
-lead time. Here we first give a proof sketch on a simple setting and then discuss
-where is the difficulty to extend it to more realistic setting.
+In the experiment, we considered two lead times. It is an interesting question
+to consider whether the system's performance change continuously with respect to
+lead time. Here we first give a proof on a simplified setting.
 
 Consider the following setting.
 \begin{itemize}
 \item There are $k$ sites, each with one machine.
 \item There are $n$ patients, numbered $1,\ldots,n$. Patient $i$
       has appointment time $a_i$ and the appointment times are
-      in non-decreasing order. Patients will arrive punctually
+      in non-decreasing order. Patients will arrive almostly
+      punctually
       according to their appointment times.
 \item The service duration $d_i$ of patient $i$ follows exponential
       distribution $Exp(\mu_i)$ with mean $\frac{1}{\mu_i}$.
@@ -85,13 +85,3 @@ thus $E[W_i(l)]$ is right continuous w.r.t. $l$. With similar argument,
 we can show it's also left-continuous. This conclude our proof that
 $E[X(l)]$ is continuous w.r.t. $l$.
 \end{proof}
-
-We'd like to extend this proof to include the try-and-compare decision
-rule we use. We also want to work with non-expoential service durations.
-However, in any of these cases, we will have the difficulty that even
-if there is no patients completion during \textit{critical windows}.
-The two system may still make different decisions with large probability.
-The system with lead time $l+\epsilon$ basically see that all patients
-have been processed $\epsilon$ more time compare to the system with lead
-time $l$. This sole fact can have impact on site overtime and leads
-to different decision.
