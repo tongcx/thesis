@@ -8,20 +8,21 @@ the lead time. Here we give a proof for the following similar but simplified set
 \item There are $n$ patients. Patient $i$ has appointment time $a_i$
       and will arrive punctually.
 \item The service duration $d_i$ of patient $i$ follows exponential
-      distribution $Exp(\mu_i)$ with mean $\frac{1}{\mu_i}$.
+      distribution, possibly with different means.
 \end{itemize}
-For technical reason, we will first make a small change to our instance:
+For technical reason, we will first slightly modify our instance:
 we will use a new appointment time $\tilde a_i = a_i + \delta u_i$,
 where $\delta$ is a small constant and each $u_i$ is a uniform
 random variable on $[-1,1]$. Now, all of the appointment times
 are different almost surely.
 
 The system will follow join-shortest-queue policy with lead time $l$.
-For each patient $i$, there is a decision epoch at time $\tilde a_i - l$.
+Consider the decision epoch at time $\tilde a_i - l$, when the
+system is deciding which site to assign patient $i$.
 Let $P_{ij}(l)$ be the set of patients that are assigned to site $j$,
 but have not completed their scans.
 The system will calculate, for each site $j$, the time $C_{ij}(l)$ to finish patients $P_{ij}(l)$,
-assuming that the scans will take expected duration. The system
+assuming that the scan duration will take expected value. The system
 will assign patient $i$ to the site with earliest $C_{ij}(l)$.
 If there is a tie, the patient will be assigned to the site with
 lower number.
@@ -35,6 +36,8 @@ We will prove the following theorem.
 \end{thm}
 
 \begin{proof}
+We want to prove $\E[X(l+\epsilon)] \rightarrow \E[X(l)]$ when
+$\epsilon \rightarrow 0$.
 Number all of the patients from $1$ to $n$ in non-decreasing order of $\tilde a_i$.
 Note that the waiting time for any patient $i$ can be bounded
 by the sum of scan duration of previous patients $\sum_{i' < i} d_{i'}$.
@@ -45,30 +48,31 @@ $X(l+\epsilon) \rightarrow X(l)$ almost surely
 as $\epsilon \rightarrow 0$, the theorem will follow from
 Dominated Convergence Theorem.
 
-Now fix a sample path $\omega$. Consider the decision epoch for patient $i$.
-Unless there are two sites with no patients assigned, there will almost surely
-be a non-zero gap between the earliest completion time and the rest.
-Let $g_1>0$ be the smallest such non-zero gap.
+Now fix a sample path $\omega$ and the lead time $l$.
+Consider the decision epoch for patient $i$.
+Unless there are two sites with empty assigned patients $P_{ij}$, there will almost surely
+be a non-zero gap between the earliest completion time $C_{ij}(l)$ and the rest.
+Let $g_1>0$ be the smallest such non-zero gap among all of the patients.
 
 Consider the closest pair of decision epoch and moment when a scan
 is finished in time, and let $g_2$ be the time between them.
-Almost surely, $g_2 > 0$. We claim $X(l+\epsilon)=X(l)$,
-if $|\epsilon| < \min\{g_1, g_2\}$,
+Almost surely, $g_2 > 0$.
 
+We claim that $X(l+\epsilon)=X(l)$, if $|\epsilon| < \min\{g_1, g_2\}$.
 Actually, we will prove the two systems will evolve exactly the same.
 Suppose that on the contrary, the two systems diverge when
 making decisions for patient $i$. Since $|\epsilon| < g_2$,
-there is no scan completion between $\tilde a_i -l$ and
-$\tilde a_i-\epsilon$, thus $P_{ij}(l) = P_{ij}(l+\epsilon)$ for any site $j$,
-or the two systems see the same set of assigned patients.
-The two system should both choose among the sites with no assigned patients
-the one with lowest number, should such site exist.
+there is no scan completed between $\tilde a_i -l$ and
+$\tilde a_i-\epsilon$, thus $P_{ij}(l) = P_{ij}(l+\epsilon)$ for any site $j$.
+In other words, the two systems see the same set of assigned patients.
+If there is some site with no assigned patients $P_{ij}(l)$,
+both systems will choose such a site with lowest number.
 Otherwise, because $|\epsilon| < g_1$, the site with lowest $C_{ij}(l)$
 still has lowest $C_{ij}(l+\epsilon)$. The two systems still
 make the same decision.
 
 Thus, we have proved that the two system evolve
 exactly the same when $\epsilon$ is sufficiently small.
-This implies, $X(l+\epsilon) \rightarrow X(l)$ almost surely
-when $\epsilon \rightarrow 0$. This completes our proof.
+This implies that $X(l+\epsilon) \rightarrow X(l)$ almost surely
+when $\epsilon \rightarrow 0$, which completes our proof.
 \end{proof}
